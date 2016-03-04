@@ -1,0 +1,9 @@
+<div><p>Experiences List HTML</p></div>
+{% block content %}
+    <h4>Experiences</h4>
+    <ul>
+        {% for experience in object_list %}
+            <li>{{ experience.title }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
