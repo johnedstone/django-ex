@@ -113,4 +113,8 @@ if DEBUG:
     MIDDLEWARE_CLASSES += \
         ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INSTALLED_APPS += ('debug_toolbar',)
-    INTERNAL_IPS = ('10.2.2.2', '127.0.0.1')
+    INTERNAL_IPS = (
+        '10.2.2.2',
+        '127.0.0.1',
+        '172.30.118.161',
+    )
