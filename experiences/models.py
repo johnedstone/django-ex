@@ -3,7 +3,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify as django_slugify
 from django.core.urlresolvers import reverse
 
-# from autoslug import AutoSlugField
+from autoslug import AutoSlugField
 
 
 @python_2_unicode_compatible
