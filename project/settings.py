@@ -113,6 +113,7 @@ if DEBUG:
     MIDDLEWARE_CLASSES += \
         ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     INSTALLED_APPS += ('debug_toolbar',)
+    ## Can not get Internal_IPS to work for 10.2.2.2 and 172.30.118.161
     INTERNAL_IPS = (
         '10.2.2.2',
         '127.0.0.1',

@@ -11,7 +11,7 @@ class Experience(models.Model):
     title = models.CharField(max_length=200)
     experience = models.TextField()
     publish = models.BooleanField(default=True, blank=False)
-    slug = AutoSlugField(populate_from=lambda instance: instance.title, slugify=django_slugify, editable=True,)
+    slug = AutoSlugField(populate_from='title', slugify=django_slugify, editable=True,)
 
     # objects = models.Manager()
     # published_experiences = PublishedExperiences()
@@ -22,7 +22,6 @@ class Experience(models.Model):
     def __str__(self):
         return self.title
 
-    # def get_absolute_url(self):
-    #     '''http://www.wellfireinteractive.com/blog/fast-and-beautiful-urls-with-django/'''
-    #     return reverse('experiences:detail', kwargs={"slug": self.slug, "pk": self.pk})
-
+    def get_absolute_url(self):
+        '''http://www.wellfireinteractive.com/blog/fast-and-beautiful-urls-with-django/'''
+        return reverse('experiences:detail', kwargs={"slug": self.slug, "pk": self.pk})
