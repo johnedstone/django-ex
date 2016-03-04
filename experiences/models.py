@@ -3,7 +3,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify as django_slugify
 from django.core.urlresolvers import reverse
 
-# from autoslug import AutoSlugField
+from autoslug import AutoSlugField
 
 
 @python_2_unicode_compatible
@@ -11,7 +11,7 @@ class Experience(models.Model):
     title = models.CharField(max_length=200)
     experience = models.TextField()
     publish = models.BooleanField(default=True, blank=False)
-    # slug = AutoSlugField(populate_from=lambda instance: instance.title, slugify=django_slugify, editable=True,)
+    slug = AutoSlugField(populate_from=lambda instance: instance.title, slugify=django_slugify, editable=True,)
 
     # objects = models.Manager()
     # published_experiences = PublishedExperiences()
