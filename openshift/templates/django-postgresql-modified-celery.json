@@ -1,0 +1,632 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "django-psql-example",
+    "annotations": {
+      "description": "An example Django application with a PostgreSQL database",
+      "tags": "quickstart,python,django,postgresql",
+      "iconClass": "icon-python"
+    }
+  },
+  "labels": {
+    "template": "django-psql-example"
+  },
+  "objects": [
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-example",
+        "annotations": {
+          "description": "Exposes and load balances the application pods"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "web",
+            "port": 8080,
+            "targetPort": 8080
+          }
+        ],
+        "selector": {
+          "name": "django-psql-example"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the database server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "postgresql",
+            "port": 5432,
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        }
+      }
+    },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "spec": {
+                "ports": [
+                    {
+                        "port": 61616,
+                        "targetPort": 61616
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "${APPLICATION_NAME}-amq"
+                }
+            },
+            "metadata": {
+                "name": "${APPLICATION_NAME}-amq-tcp",
+                "annotations": {
+                    "description": "The broker's OpenWire port."
+                }
+            }
+        },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-example"
+      },
+      "spec": {
+        "host": "${APPLICATION_DOMAIN}",
+        "to": {
+          "kind": "Service",
+          "name": "django-psql-example"
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-example",
+        "annotations": {
+          "description": "Keeps track of changes in the application image"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-example",
+        "annotations": {
+          "description": "Defines how to build the application"
+        }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.4"
+            }
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "django-psql-example:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          }
+        ],
+        "postCommit": {
+           "script": "./manage.py test"
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-example",
+        "annotations": {
+          "description": "Defines how to deploy the application server"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "django-psql-example"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "django-psql-example:latest"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "django-psql-example"
+        },
+        "template": {
+          "metadata": {
+            "name": "django-psql-example",
+            "labels": {
+              "name": "django-psql-example"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "django-psql-example",
+                "image": "django-psql-example",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 3,
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  }
+                },
+                "env": [
+                  {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_ENGINE",
+                    "value": "${DATABASE_ENGINE}"
+                  },
+                  {
+                    "name": "DATABASE_NAME",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "APP_CONFIG",
+                    "value": "${APP_CONFIG}"
+                  },
+                  {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "${DJANGO_SECRET_KEY}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the database"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "postgresql"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "openshift",
+                "name": "postgresql:9.4"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${DATABASE_SERVICE_NAME}",
+            "labels": {
+              "name": "${DATABASE_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "postgresql",
+                "image": "postgresql",
+                "ports": [
+                  {
+                    "containerPort": 5432
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "POSTGRESQL_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "POSTGRESQL_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_DATABASE",
+                    "value": "${DATABASE_NAME}"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "psql -h 127.0.0.1 -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'"]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port": 5432
+                  }
+                },
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_POSTGRESQL_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}-amq",
+                "annotations": {
+                    "description": "Defines how to deploy amq"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APPLICATION_NAME}-amq"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "${IMAGE_STREAM_NAMESPACE}",
+                                "name": "jboss-amq-62:1.2"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "${APPLICATION_NAME}-amq"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "${APPLICATION_NAME}-amq",
+                        "labels": {
+                            "deploymentConfig": "${APPLICATION_NAME}-amq",
+                            "application": "${APPLICATION_NAME}"
+                        }
+                    },
+                    "spec": {
+                        "terminationGracePeriodSeconds": 60,
+                        "containers": [
+                            {
+                                "name": "${APPLICATION_NAME}-amq",
+                                "image": "jboss-amq-62",
+                                "imagePullPolicy": "Always",
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/bash",
+                                            "-c",
+                                            "/opt/amq/bin/readinessProbe.sh"
+                                        ]
+                                    }
+                                },
+                                "ports": [
+                                    {
+                                        "name": "amqp",
+                                        "containerPort": 5672,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "amqp-ssl",
+                                        "containerPort": 5671,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "mqtt",
+                                        "containerPort": 1883,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "stomp",
+                                        "containerPort": 61613,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "stomp-ssl",
+                                        "containerPort": 61612,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "tcp",
+                                        "containerPort": 61616,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "tcp-ssl",
+                                        "containerPort": 61617,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "AMQ_USER",
+                                        "value": "${MQ_USERNAME}"
+                                    },
+                                    {
+                                        "name": "AMQ_PASSWORD",
+                                        "value": "${MQ_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "AMQ_TRANSPORTS",
+                                        "value": "${MQ_PROTOCOL}"
+                                    },
+                                    {
+                                        "name": "AMQ_QUEUES",
+                                        "value": "${MQ_QUEUES}"
+                                    },
+                                    {
+                                        "name": "AMQ_TOPICS",
+                                        "value": "${MQ_TOPICS}"
+                                    },
+                                    {
+                                        "name": "AMQ_ADMIN_USERNAME",
+                                        "value": "${AMQ_ADMIN_USERNAME}"
+                                    },
+                                    {
+                                        "name": "AMQ_ADMIN_PASSWORD",
+                                        "value": "${AMQ_ADMIN_PASSWORD}"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+  ],
+  "parameters": [
+        {
+            "name": "APPLICATION_NAME",
+            "description": "The name for the application.",
+            "value": "django-celery",
+            "required": true
+        },
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Memory limit",
+      "description": "Maximum amount of memory the Django container can use",
+      "value": "512Mi"
+    },
+    {
+      "name": "MEMORY_POSTGRESQL_LIMIT",
+      "displayName": "Memory limit",
+      "description": "Maximum amount of memory the PostgreSQL container can use",
+      "value": "512Mi"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_URL",
+      "displayName": "Source repository URL",
+      "description": "The URL of the repository with your application source code",
+      "value": "https://github.com/openshift/django-ex.git"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_REF",
+      "displayName": "Source repository reference",
+      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch"
+    },
+    {
+      "name": "CONTEXT_DIR",
+      "displayName": "Context directory",
+      "description": "Set this to the relative path to your project if it is not in the root of your repository"
+    },
+    {
+      "name": "APPLICATION_DOMAIN",
+      "displayName": "Application hostname",
+      "description": "The exposed hostname that will route to the Django service, if left blank a value will be defaulted.",
+      "value": ""
+    },
+    {
+      "name": "GITHUB_WEBHOOK_SECRET",
+      "displayName": "GitHub webhook secret",
+      "description": "A secret string used to configure the GitHub webhook",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{40}"
+    },
+    {
+      "name": "DATABASE_SERVICE_NAME",
+      "displayName": "Database service name",
+      "description": "Database service name",
+      "value": "postgresql"
+    },
+    {
+      "name": "DATABASE_ENGINE",
+      "displayName": "Database engine",
+      "description": "Database engine: postgresql, mysql or sqlite (default)",
+      "value": "postgresql"
+    },
+    {
+      "name": "DATABASE_NAME",
+      "displayName": "Database name",
+      "description": "Database name",
+      "value": "default"
+    },
+    {
+      "name": "DATABASE_USER",
+      "displayName": "Database user name",
+      "description": "Database user name",
+      "value": "django"
+    },
+    {
+      "name": "DATABASE_PASSWORD",
+      "displayName": "Database user password",
+      "description": "Database user password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
+    },
+    {
+      "name": "APP_CONFIG",
+      "displayName": "Application configuration file path",
+      "description": "Relative path to Gunicorn configuration file (optional)"
+    },
+    {
+      "name": "DJANGO_SECRET_KEY",
+      "displayName": "Djange secret key",
+      "description": "Set this to a long random string",
+      "generate": "expression",
+      "from": "[\\w]{50}"
+    },
+        {
+            "name": "IMAGE_STREAM_NAMESPACE",
+            "description": "Namespace in which the ImageStreams for Red Hat Middleware images are installed. These ImageStreams are normally installed in the openshift namespace. You should only need to modify this if you've installed the ImageStreams in a different namespace/project.",
+            "value": "openshift",
+            "required": true
+        },
+        {
+            "name": "MQ_USERNAME",
+            "description": "User name for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.",
+            "generate": "expression",
+            "from": "user[a-zA-Z0-9]{3}"
+        },
+        {
+            "name": "MQ_PASSWORD",
+            "description": "Password for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{8}"
+        },
+        {
+            "name": "MQ_PROTOCOL",
+            "description": "Broker protocols to configure, separated by commas. Allowed values are: `openwire`, `amqp`, `stomp` and `mqtt`. Only `openwire` is supported by EAP.",
+            "value": "amqp,openwire"
+        },
+        {
+            "name": "MQ_QUEUES",
+            "description": "Queue names, separated by commas. These queues will be automatically created when the broker starts. Also, they will be made accessible as JNDI resources in EAP.",
+            "value": "HELLOWORLDMDBQueue"
+        },
+        {
+            "name": "MQ_TOPICS",
+            "description": "Topic names, separated by commas. These topics will be automatically created when the broker starts. Also, they will be made accessible as JNDI resources in EAP.",
+            "value": "HELLOWORLDMDBTopic"
+        },
+        {
+            "name": "AMQ_ADMIN_USERNAME",
+            "description": "User name for broker admin. If left empty, it will be generated.",
+            "generate": "expression",
+            "from": "user[a-zA-Z0-9]{3}",
+            "required": true
+        },
+        {
+            "name": "AMQ_ADMIN_PASSWORD",
+            "description": "Password for broker admin. If left empty, it will be generated.",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{8}",
+            "required": true
+        }
+  ]
+}
