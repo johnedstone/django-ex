@@ -2,22 +2,22 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-example",
+    "name": "django-psql-celery",
     "annotations": {
-      "description": "An example Django application with a PostgreSQL database",
-      "tags": "quickstart,python,django,postgresql",
+      "description": "An celery Django application with a PostgreSQL database demonstrating Celery and a restful API",
+      "tags": "quickstart,python,django,postgresql,celery, restful_api",
       "iconClass": "icon-python"
     }
   },
   "labels": {
-    "template": "django-psql-example"
+    "template": "django-psql-celery"
   },
   "objects": [
     {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-example",
+        "name": "django-psql-celery",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
@@ -31,7 +31,7 @@
           }
         ],
         "selector": {
-          "name": "django-psql-example"
+          "name": "django-psql-celery"
         }
       }
     },
@@ -82,13 +82,13 @@
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-example"
+        "name": "django-psql-celery"
       },
       "spec": {
         "host": "${APPLICATION_DOMAIN}",
         "to": {
           "kind": "Service",
-          "name": "django-psql-example"
+          "name": "django-psql-celery"
         }
       }
     },
@@ -96,7 +96,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-example",
+        "name": "django-psql-celery",
         "annotations": {
           "description": "Keeps track of changes in the application image"
         }
@@ -106,7 +106,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-example",
+        "name": "django-psql-celery",
         "annotations": {
           "description": "Defines how to build the application"
         }
@@ -133,7 +133,7 @@
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "django-psql-example:latest"
+            "name": "django-psql-celery:latest"
           }
         },
         "triggers": [
@@ -159,7 +159,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-example",
+        "name": "django-psql-celery",
         "annotations": {
           "description": "Defines how to deploy the application server"
         }
@@ -174,11 +174,11 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "django-psql-example"
+                "django-psql-celery"
               ],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "django-psql-example:latest"
+                "name": "django-psql-celery:latest"
               }
             }
           },
@@ -188,20 +188,20 @@
         ],
         "replicas": 1,
         "selector": {
-          "name": "django-psql-example"
+          "name": "django-psql-celery"
         },
         "template": {
           "metadata": {
-            "name": "django-psql-example",
+            "name": "django-psql-celery",
             "labels": {
-              "name": "django-psql-example"
+              "name": "django-psql-celery"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "django-psql-example",
-                "image": "django-psql-example",
+                "name": "django-psql-celery",
+                "image": "django-psql-celery",
                 "ports": [
                   {
                     "containerPort": 8080
@@ -379,7 +379,7 @@
                             ],
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "namespace": "${IMAGE_STREAM_NAMESPACE}",
+                                "namespace": "openshift",
                                 "name": "jboss-amq-62:1.2"
                             }
                         }
@@ -494,7 +494,7 @@
         {
             "name": "APPLICATION_NAME",
             "description": "The name for the application.",
-            "value": "django-celery",
+            "value": "django-psql-celery",
             "required": true
         },
     {
@@ -513,7 +513,7 @@
       "name": "SOURCE_REPOSITORY_URL",
       "displayName": "Source repository URL",
       "description": "The URL of the repository with your application source code",
-      "value": "https://github.com/openshift/django-ex.git"
+      "value": "https://github.com/johnedstone/django-ex.git"
     },
     {
       "name": "SOURCE_REPOSITORY_REF",
@@ -581,12 +581,6 @@
       "generate": "expression",
       "from": "[\\w]{50}"
     },
-        {
-            "name": "IMAGE_STREAM_NAMESPACE",
-            "description": "Namespace in which the ImageStreams for Red Hat Middleware images are installed. These ImageStreams are normally installed in the openshift namespace. You should only need to modify this if you've installed the ImageStreams in a different namespace/project.",
-            "value": "openshift",
-            "required": true
-        },
         {
             "name": "MQ_USERNAME",
             "description": "User name for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.",
