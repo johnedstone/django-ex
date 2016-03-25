@@ -1,6 +1,8 @@
 # Openshift quickstart: Django
 
 #### Updates ####
+* 24-Mar-2016: Bring in ideas from [docker-compose]("https://github.com/johnedstone/docker-django-celery") and look at [celery-amq]("http://docs.celeryproject.org/en/latest/getting-started/next-steps.html#next-steps to use amq")
+* 24-Mar-2016: Added amq
 * 10-Mar-2016: updated postgresql template with syntax updated to work
 * 06-Mar-2016: Added Experiences App to test Openshift
 
