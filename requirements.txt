@@ -1,1 +1,1 @@
-requirements_project.txt
+requirements_picha.txt

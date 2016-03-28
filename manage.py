@@ -1,1 +1,1 @@
-manage_project.py
+manage_picha.py
