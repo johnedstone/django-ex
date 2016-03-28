@@ -1,6 +1,7 @@
 # Openshift quickstart: Django
 
 #### Updates ####
+* 27-Mar-2016: Use symbolic links for manage.py and requirements.txt
 * 24-Mar-2016: Next bring in ideas from [docker-compose](https://github.com/johnedstone/docker-django-celery) and look at [celery-amq](http://docs.celeryproject.org/en/latest/getting-started/next-steps.html#next-steps to use amq)
 * 24-Mar-2016: Added amq
 * 10-Mar-2016: updated postgresql template with syntax updated to work

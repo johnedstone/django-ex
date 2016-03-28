@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-redis",
+    "name": "django-psql-redis-simple",
     "annotations": {
       "description": "An example Django application with a PostgreSQL database and redis",
       "tags": "quickstart,python,django,postgresql,redis",
@@ -10,7 +10,7 @@
     }
   },
   "labels": {
-    "template": "django-psql-redis"
+    "template": "django-psql-redis-simple"
   },
   "objects": [
     {
