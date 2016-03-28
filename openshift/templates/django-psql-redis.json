@@ -416,7 +416,7 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": [ "/bin/sh", "-i", "-c", "redis-cli ping" ]
+                    "command": [ "/bin/sh", "-i", "-c", "/usr/local/bin/redis-cli ping" ]
                   }
                 },
                 "livenessProbe": {
