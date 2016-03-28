@@ -93,7 +93,7 @@ CELERY_TIMEZONE = 'Africa/Nairobi'
 if DEBUG:
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = '/tmp/app-messages'
+    EMAIL_FILE_PATH = '/tmp'
     EMAIL_HOST = 'localhost'
     EMAIL_PORT = 1025
     DEFAULT_FROM_EMAIL = 'Picha <picha@example.com>'
