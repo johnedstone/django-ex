@@ -1,7 +1,7 @@
 # Openshift quickstart: Django
 
 ### v1-django-simple - my notes
-This is the simplest from, django, openshift, sqlite3
+This is the simplest form: django, openshift, sqlite3
 
 ### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
