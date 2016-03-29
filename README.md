@@ -1,11 +1,11 @@
 # Openshift quickstart: Django
 
-#### Updates ####
-* 27-Mar-2016: Copying manage.py and requirements.txt from project specific files
-* 24-Mar-2016: Next bring in ideas from [docker-compose](https://github.com/johnedstone/docker-django-celery) and look at [celery-amq](http://docs.celeryproject.org/en/latest/getting-started/next-steps.html#next-steps to use amq)
-* 24-Mar-2016: Added amq
-* 10-Mar-2016: updated postgresql template with syntax updated to work
-* 06-Mar-2016: Added Experiences App to test Openshift
+### v3-django-psql-redis-simple: my notes
+This is the a bit more complex: django, openshift, postgresql, redis (just the pod)
+
+Imported image stream with somthing like this ```oc import-image redis:2.1.19 --from="docker.io/redis"```
+
+### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 
