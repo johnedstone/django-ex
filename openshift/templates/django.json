@@ -239,7 +239,7 @@
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
       "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
-      "v1-django-simple"
+      "value": "v1-django-simple"
     },
     {
       "name": "CONTEXT_DIR",
