@@ -1,13 +1,28 @@
 # Openshift quickstart: Django
 
-### v1-django-simple
-This is the simplest from, django, openshift, sqlite3
+### v2-django-psql - my notes
+This is the a bit more complex: django, openshift, postgresql
+There was one 'bug' in this template, that was corrected with adding ```"automatic": true``` in the postgresql dc
 
+    ```
+    262             "imageChangeParams": {
+    263               "automatic": true,
+    264               "containerNames": [
+    265                 "postgresql"
+    266               ],
+    267             "from": {
+    268               "kind": "ImageStreamTag",
+    269               "namespace": "openshift",
+    270               "name": "postgresql:9.4"
+    271             }
+    ```
+
+### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 
 The steps in this document assume that you have access to an OpenShift deployment that you can deploy applications on.
 
-## What has been done for you
+### What has been done for you
 
 This is a minimal Django 1.8 project. It was created with these steps:
 
