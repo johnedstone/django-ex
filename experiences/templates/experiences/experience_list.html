@@ -1,0 +1,11 @@
+<div style="font-family: Verdana,Tahoma,Arial,sans-serif;color:#6666ff;margin:2em;font-style:italic;">
+<div><p>Experiences List HTML</p></div>
+{% block content %}
+    <h4>Experiences</h4>
+    <ul>
+        {% for experience in object_list %}
+            <li>{{ experience.title }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

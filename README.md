@@ -2,6 +2,7 @@
 
 ### v2-django-psql - my notes
 This is the a bit more complex: django, openshift, postgresql
+Also,  I added the app experiences, as an example.
 There was one 'bug' in this template, that was corrected with adding ```"automatic": true``` in the postgresql dc
 
     ```
