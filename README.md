@@ -6,7 +6,7 @@ Also,  I added the app experiences, as an example.
 There was one 'bug' in this template, that was corrected with adding ```"automatic": true``` in the postgresql dc
 
     262             "imageChangeParams": {
-    263               "automatic": true,
+    263               __"automatic": true,__
     264               "containerNames": [
     265                 "postgresql"
     266               ],
