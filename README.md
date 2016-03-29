@@ -3,7 +3,7 @@
 ### v3-django-psql-redis-simple: my notes
 This is the a bit more complex: django, openshift, postgresql, redis (just the pod)
 
-Imported image stream with somthing like this ```oc import-image redis:2.1.19 --from="docker.io/redis"```
+Imported image stream with somthing like this ```oc import-image redis:2.1.19 --from="docker.io/redis" --confirm```
 
 ### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
