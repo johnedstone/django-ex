@@ -233,12 +233,13 @@
       "name": "SOURCE_REPOSITORY_URL",
       "displayName": "Source repository URL",
       "description": "The URL of the repository with your application source code",
-      "value": "https://github.com/openshift/django-ex.git"
+      "value": "https://github.com/johnedstone/django-ex.git"
     },
     {
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
-      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch"
+      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
+      "v1-django-simple"
     },
     {
       "name": "CONTEXT_DIR",
