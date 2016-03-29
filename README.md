@@ -5,7 +5,6 @@ This is the a bit more complex: django, openshift, postgresql
 Also,  I added the app experiences, as an example.
 There was one 'bug' in this template, that was corrected with adding ```"automatic": true``` in the postgresql dc
 
-    ```
     262             "imageChangeParams": {
     263               "automatic": true,
     264               "containerNames": [
@@ -16,7 +15,6 @@ There was one 'bug' in this template, that was corrected with adding ```"automat
     269               "namespace": "openshift",
     270               "name": "postgresql:9.4"
     271             }
-    ```
 
 ### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
