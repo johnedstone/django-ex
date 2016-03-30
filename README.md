@@ -1,6 +1,6 @@
 # Openshift quickstart: Django
 
-### v3-django-psql-redis-simple: my notes
+### Merged v3-django-psql-redis-simple into master: my notes
 This is the a bit more complex: django, openshift, postgresql, redis (just the pod)
 
 Imported image stream with somthing like this ```oc import-image redis:2.1.19 --from="docker.io/redis" --confirm```
