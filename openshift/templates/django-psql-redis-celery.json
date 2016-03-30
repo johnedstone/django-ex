@@ -85,9 +85,12 @@
               "namespace": "openshift",
               "name": "python:3.4"
             },
-            "env": {
-              "APP_MODULE": "picha.wsi"
-            }
+            "env": [
+              {
+                "name": "APP_MODULE",
+                "value": "picha.wsgi"
+              }
+            ]
           }
         },
         "output": {
