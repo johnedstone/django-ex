@@ -29,20 +29,21 @@ This is the a bit more complex: django, openshift, postgresql, redis (just the p
     oc get is -n openshift |egrep redis <confirms image stream was created>
     docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
     ```
+
 #### Setting up on Windows and in a proxy'd environment
 - Reference: https://www.openshift.org/vm/
   * Install Vagrant and Virtual Box for Windows
   * Instal 64 bit cygwin base plus openssh
 - Open cygwin teminal, and make a dir to work in
 - ```export PATH=/cygdrive/c/HashiCorp/Vagrant/bin:$PATH```
-- export https_proxy=<ip>
+- export https_proxy=ip:port
 - From the reference: ```vagrant init ....```
 - From the reference: ```vagrant ssh ...```
 - Once in the container, sudo su - add the following to /etc/sysconfig/docker and restart docker
 
     ```
-    HTTPS_PROXY=https://<ip address>:port
-    HTTP_PROXY=http://<ip address:port
+    HTTPS_PROXY=https://ip address:port
+    HTTP_PROXY=http://ip address:port
     NO_PROXY=172.30.210.155
     ```
 
