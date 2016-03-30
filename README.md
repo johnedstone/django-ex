@@ -1,6 +1,6 @@
 # Openshift quickstart: Django
 
-### v3-django-psql-redis-simple: my notes
+### v3-django-psql-redis-simple using the Origin Openshift VM
 - This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
 - This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the template
 
@@ -31,7 +31,7 @@
     docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
     ```
 
-#### Setting up on Windows and in a proxy'd environment
+#### Using the Origin Openshift VM on Windows and in a proxy'd environment
 - Reference: https://www.openshift.org/vm/
   * Install Vagrant and Virtual Box for Windows
   * Instal 64 bit cygwin base plus openssh
