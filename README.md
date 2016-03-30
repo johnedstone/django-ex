@@ -1,10 +1,11 @@
 # Openshift quickstart: Django
 
-### v3-django-psql-redis-simple using the Origin Openshift VM
-- This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
+#### django-psql-redis-simple using the Origin Openshift VM
+- This is v3 merged into the master branch.  Simpler examples are in v1 and v2
+- This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod), and including Windows and proxy information
 - This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the template
 
-#### How to import a docker image and image stream - both of these two methods worked.  The second worked in the Windows env, that was proxy'd
+##### How to import a docker image and image stream - both of these two methods worked.  The second worked in the Windows env, that was proxy'd
 - Put simply, it appears push creates the image stream 
 
     ```
@@ -31,7 +32,7 @@
     docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
     ```
 
-#### Using the Origin Openshift VM on Windows and in a proxy'd environment
+##### Using the Origin Openshift VM on Windows and in a proxy'd environment
 - Reference: https://www.openshift.org/vm/
   * Install Vagrant and Virtual Box for Windows
   * Instal 64 bit cygwin base plus openssh
