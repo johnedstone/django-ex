@@ -1,9 +1,56 @@
 # Openshift quickstart: Django
 
-### Merged v3-django-psql-redis-simple into master: my notes
-This is the a bit more complex: django, openshift, postgresql, redis (just the pod)
+### v3-django-psql-redis-simple using the Origin Openshift VM
+- This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
+- This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the template
 
-Imported image stream with somthing like this ```oc import-image redis:2.1.19 --from="docker.io/redis" --confirm```
+#### How to import a docker image and image stream - both of these two methods worked.  The second worked in the Windows env, that was proxy'd
+- Put simply, it appears push creates the image stream 
+
+    ```
+   <as root>
+   docker pull redis:2.8.19
+   docker tag docker.io/redis:2.8.19 172.30.210.155:5000/openshift/redis:2.8.19
+   docker push 172.30.210.155:5000/openshift/redis:2.8.19
+   docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
+    ```
+
+- This reference worked as well, but too complicated: http://www.opensourcerers.org/importing-an-external-docker-image-into-red-hat-openshift-v3/
+
+    ```
+    sudo docker pull redis:2.8.19
+    sudo docker tag docker.io/redis:2.8.19 172.30.210.155:5000/openshift/redis:2.8.19
+
+    <as root>
+    oc login <admin>
+    docker login -u admin -e a@b.com -p $(oc whoami -t) 172.30.210.155:5000
+    docker push 172.30.210.155:5000/openshift/redis:2.8.19
+
+
+    oc get is -n openshift |egrep redis <confirms image stream was created>
+    docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
+    ```
+
+#### Using the Origin Openshift VM on Windows and in a proxy'd environment
+- Reference: https://www.openshift.org/vm/
+  * Install Vagrant and Virtual Box for Windows
+  * Instal 64 bit cygwin base plus openssh
+- Open cygwin teminal, and make a dir to work in
+- ```export PATH=/cygdrive/c/HashiCorp/Vagrant/bin:$PATH```
+- export https_proxy=ip:port
+- From the reference: ```vagrant init ....```
+- From the reference: ```vagrant ssh ...```
+- Once in the container, sudo su - add the following to /etc/sysconfig/docker and restart docker
+
+    ```
+    HTTPS_PROXY=https://ip address:port
+    HTTP_PROXY=http://ip address:port
+    NO_PROXY=172.30.210.155
+    ```
+
+- Continue to work, not as root, with the oc commands in the VM
+- When finished, exit the VM and run ```vagrant suspend```
+- When starting again, run ```vagrant resume```
 
 ### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
