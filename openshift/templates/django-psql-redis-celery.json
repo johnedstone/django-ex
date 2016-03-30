@@ -2,22 +2,22 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-johnedstone",
+    "name": "django-psql-redis-simple",
     "annotations": {
-      "description": "An example Django application with a PostgreSQL database",
-      "tags": "quickstart,python,django,postgresql",
+      "description": "An example Django application with a PostgreSQL database and redis",
+      "tags": "quickstart,python,django,postgresql,redis",
       "iconClass": "icon-python"
     }
   },
   "labels": {
-    "template": "django-psql-johnedstone"
+    "template": "django-psql-redis-simple"
   },
   "objects": [
     {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-johnedstone",
+        "name": "django-psql-redis",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
@@ -31,7 +31,7 @@
            }
         ],
         "selector": {
-          "name": "django-psql-johnedstone"
+          "name": "django-psql-redis"
         }
       }
     },
@@ -39,13 +39,13 @@
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-johnedstone"
+        "name": "django-psql-redis"
       },
       "spec": {
         "host": "${APPLICATION_DOMAIN}",
         "to": {
           "kind": "Service",
-          "name": "django-psql-johnedstone"
+          "name": "django-psql-redis"
         }
       }
     },
@@ -53,7 +53,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-johnedstone",
+        "name": "django-psql-redis",
         "annotations": {
           "description": "Keeps track of changes in the application image"
         }
@@ -63,7 +63,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-johnedstone",
+        "name": "django-psql-redis",
         "annotations": {
           "description": "Defines how to build the application"
          }
@@ -84,13 +84,16 @@
               "kind": "ImageStreamTag",
               "namespace": "openshift",
               "name": "python:3.4"
+            },
+            "env": {
+              "APP_MODULE": "picha.wsi"
             }
           }
         },
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "django-psql-johnedstone:latest"
+            "name": "django-psql-redis:latest"
           }
         },
         "triggers": [
@@ -116,7 +119,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-johnedstone",
+        "name": "django-psql-redis",
         "annotations": {
           "description": "Defines how to deploy the application server"
          }
@@ -131,11 +134,11 @@
           "imageChangeParams": {
             "automatic": true,
             "containerNames": [
-              "django-psql-johnedstone"
+              "django-psql-redis"
             ],
             "from": {
               "kind": "ImageStreamTag",
-              "name": "django-psql-johnedstone:latest"
+              "name": "django-psql-redis:latest"
             }
           }
         },
@@ -145,20 +148,20 @@
       ],
       "replicas": 1,
       "selector": {
-        "name": "django-psql-johnedstone"
+        "name": "django-psql-redis"
       },
       "template": {
           "metadata": {
-            "name": "django-psql-johnedstone",
+            "name": "django-psql-redis",
             "labels": {
-              "name": "django-psql-johnedstone"
+              "name": "django-psql-redis"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "django-psql-johnedstone",
-                "image": "django-psql-johnedstone",
+                "name": "django-psql-redis",
+                "image": "django-psql-redis",
                 "ports": [
                   {
                     "containerPort": 8080
@@ -240,6 +243,28 @@
         ],
         "selector": {
           "name": "${DATABASE_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${REDIS_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the redis server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "redis",
+            "port": 6379,
+            "targetPort": 6379
+          }
+        ],
+        "selector": {
+          "name": "${REDIS_SERVICE_NAME}"
         }
       }
     },
@@ -334,6 +359,81 @@
           }
         }
       }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${REDIS_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy redis"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "redis"
+              ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "redis:2.8.19"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+        }
+      ],
+          "replicas": 1,
+          "selector": {
+            "name": "${REDIS_SERVICE_NAME}"
+          },
+          "template": {
+            "metadata": {
+              "name": "${REDIS_SERVICE_NAME}",
+              "labels": {
+                "name": "${REDIS_SERVICE_NAME}"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "redis",
+                  "image": "redis",
+                  "ports": [
+                    {
+                      "containerPort": 6379
+                    }
+                  ],
+                  "env": [
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "/usr/local/bin/redis-cli ping" ]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port": 6379
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
     }
   ],
   "parameters": [
@@ -358,7 +458,8 @@
     {
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
-      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch"
+      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
+      "value": "v4-django-psql-redis-celery"
     },
     {
       "name": "CONTEXT_DIR",
@@ -383,6 +484,12 @@
       "displayName": "Database service name",
       "description": "Database service name",
       "value": "postgresql"
+    },
+    {
+      "name": "REDIS_SERVICE_NAME",
+      "displayName": "Redis service name",
+      "description": "Redis service name",
+      "value": "redis"
     },
     {
       "name": "DATABASE_ENGINE",
