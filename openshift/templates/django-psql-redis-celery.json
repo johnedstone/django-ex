@@ -17,7 +17,7 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis",
+        "name": "django-picha",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
