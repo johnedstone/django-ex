@@ -4,7 +4,7 @@
 - This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
 - This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the template
 
-#### How to import a docker image and image stream - these two both worked.  The second worked in the Windows env, that was proxy'd
+#### How to import a docker image and image stream - Both of these two methods worked.  The second worked in the Windows env, that was proxy'd
 - Put simply, it appears push creates the image stream 
 
     ```
