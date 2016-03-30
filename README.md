@@ -1,9 +1,10 @@
 # Openshift quickstart: Django
 
 ### v3-django-psql-redis-simple: my notes
-This is the a bit more complex: django, openshift, postgresql, redis (just the pod)
+- This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
+- This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the template
 
-#### How to import a docker image and image stream - these two both worked and are about the same
+#### How to import a docker image and image stream - these two both worked.  The second worked in the Windows env, that was proxy'd
 - Put simply, it appears push creates the image stream 
 
     ```
