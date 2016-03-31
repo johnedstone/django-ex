@@ -3,9 +3,18 @@
 ### v3-django-psql-redis-simple: my notes
 This is the a bit more complex: django, openshift, postgresql, redis (just the pod)
 
-#### How to import a docker image and image stream
-- This did not work, as I had hoped, though I thought it did:  ```oc import-image redis:2.1.19 --from="docker/redis" --confirm```
-- This reference did work: http://www.opensourcerers.org/importing-an-external-docker-image-into-red-hat-openshift-v3/
+#### How to import a docker image and image stream - these two both worked and are about the same
+- Put simply, it appears push creates the image stream 
+
+    ```
+   <as root>
+   docker pull redis:2.8.19
+   docker tag docker.io/redis:2.8.19 172.30.210.155:5000/openshift/redis:2.8.19
+   docker push 172.30.210.155:5000/openshift/redis:2.8.19
+   docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
+    ```
+
+- This reference worked as well, but too complicated: http://www.opensourcerers.org/importing-an-external-docker-image-into-red-hat-openshift-v3/
 
     ```
     sudo docker pull redis:2.8.19
