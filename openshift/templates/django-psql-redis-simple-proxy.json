@@ -74,8 +74,8 @@
           "git": {
             "uri": "${SOURCE_REPOSITORY_URL}",
             "ref": "${SOURCE_REPOSITORY_REF}",
-            "httpProxy": "http://40.0.40.10:9000",
-            "httpsProxy": "https://40.0.40.10:9000"
+            "httpProxy": "http://ip:port
+            "httpsProxy": "https://ip:port
           },
           "contextDir": "${CONTEXT_DIR}"
         },
@@ -85,11 +85,11 @@
             "env": [
               {
                 "name": "HTTP_PROXY",
-                "value": "http://40.0.40.10:9000"
+                "value": "http://ip:port
               },
               {
                 "name": "HTTPS_PROXY",
-                "value": "https://40.0.40.10:9000"
+                "value": "https://ip:port
               }
             ],
             "from": {
