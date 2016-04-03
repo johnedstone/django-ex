@@ -11,60 +11,16 @@
     }
   },
   "labels": {
-    "template": "django-psql-redis-celery"
+    "template": "django-psql-redis-celery",
+    "application": "django-psql-redis-celery",
+    "createdBy": "template-django-psql-redis-celery"
   },
   "objects": [
-    {
-      "kind": "Service",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis-http",
-        "annotations": {
-          "description": "Exposes and load balances the application pods"
-        }
-      },
-      "spec": {
-        "ports": [
-          {
-            "name": "web",
-            "port": 8080,
-            "targetPort": 8080
-           }
-        ],
-        "selector": {
-          "name": "django-psql-redis"
-        }
-      }
-    },
-    {
-      "kind": "Route",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis"
-      },
-      "spec": {
-        "host": "${APPLICATION_DOMAIN}",
-        "to": {
-          "kind": "Service",
-          "name": "django-psql-redis"
-        }
-      }
-    },
-    {
-      "kind": "ImageStream",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis",
-        "annotations": {
-          "description": "Keeps track of changes in the application image"
-        }
-      }
-    },
     {
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis",
+        "name": "django-psql-redis-celery",
         "annotations": {
           "description": "Defines how to build the application"
          }
@@ -97,7 +53,7 @@
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "django-psql-redis:latest"
+            "name": "django-psql-redis-celery:latest"
           }
         },
         "triggers": [
@@ -120,10 +76,20 @@
       }
     },
     {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-redis-celery",
+        "annotations": {
+          "description": "Keeps track of changes in the application image"
+        }
+      }
+    },
+    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis",
+        "name": "django-psql-redis-celery",
         "annotations": {
           "description": "Defines how to deploy the application server"
          }
@@ -138,11 +104,11 @@
           "imageChangeParams": {
             "automatic": true,
             "containerNames": [
-              "django-psql-redis"
+              "django-psql-redis-celery"
             ],
             "from": {
               "kind": "ImageStreamTag",
-              "name": "django-psql-redis:latest"
+              "name": "django-psql-redis-celery:latest"
             }
           }
         },
@@ -152,20 +118,20 @@
       ],
       "replicas": 1,
       "selector": {
-        "name": "django-psql-redis"
+        "name": "django-psql-redis-celery"
       },
       "template": {
           "metadata": {
-            "name": "django-psql-redis",
+            "name": "django-psql-redis-celery",
             "labels": {
-              "name": "django-psql-redis"
+              "name": "django-psql-redis-celery"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "django-psql-redis",
-                "image": "django-psql-redis",
+                "name": "django-psql-redis-celery",
+                "image": "django-psql-redis-celery",
                 "ports": [
                   {
                     "containerPort": 8080
@@ -225,50 +191,6 @@
               }
             ]
           }
-        }
-      }
-    },
-    {
-      "kind": "Service",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
-        "annotations": {
-          "description": "Exposes the database server"
-        }
-      },
-      "spec": {
-        "ports": [
-          {
-            "name": "postgresql",
-            "port": 5432,
-            "targetPort": 5432
-          }
-        ],
-        "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
-        }
-      }
-    },
-    {
-      "kind": "Service",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${REDIS_SERVICE_NAME}",
-        "annotations": {
-          "description": "Exposes the redis server"
-        }
-      },
-      "spec": {
-        "ports": [
-          {
-            "name": "redis",
-            "port": 6379,
-            "targetPort": 6379
-          }
-        ],
-        "selector": {
-          "name": "${REDIS_SERVICE_NAME}"
         }
       }
     },
@@ -436,6 +358,86 @@
               }
             ]
           }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-celery-http",
+        "annotations": {
+          "description": "Exposes and load balances the application pods"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "web",
+            "port": 8080,
+            "targetPort": 8080
+           }
+        ],
+        "selector": {
+          "deploymentConfig": "django-psql-redis-celery"
+        }
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-psql-redis-celery-http-route"
+      },
+      "spec": {
+        "host": "${APPLICATION_DOMAIN}",
+        "to": {
+          "kind": "Service",
+          "name": "django-celery-http"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the database server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "postgresql",
+            "port": 5432,
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "deploymentConfig": "${DATABASE_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${REDIS_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the redis server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "redis",
+            "port": 6379,
+            "targetPort": 6379
+          }
+        ],
+        "selector": {
+          "deploymentConfig": "${REDIS_SERVICE_NAME}"
         }
       }
     }
