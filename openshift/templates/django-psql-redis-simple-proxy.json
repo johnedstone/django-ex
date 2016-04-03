@@ -2,23 +2,22 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-redis-celery",
+    "name": "django-psql-redis-simple",
     "annotations": {
-      "description": "An example Django application with psql, redis, and celery",
-      "reference": "https://blog.openshift.com/part-2-creating-a-template-a-technical-walkthrough/",
+      "description": "An example Django application with a PostgreSQL database and redis",
       "tags": "quickstart,python,django,postgresql,redis",
       "iconClass": "icon-python"
     }
   },
   "labels": {
-    "template": "django-psql-redis-celery"
+    "template": "django-psql-redis-simple"
   },
   "objects": [
     {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-http",
+        "name": "django-psql-redis",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
@@ -74,24 +73,30 @@
           "type": "Git",
           "git": {
             "uri": "${SOURCE_REPOSITORY_URL}",
-            "ref": "${SOURCE_REPOSITORY_REF}"
+            "ref": "${SOURCE_REPOSITORY_REF}",
+            "httpProxy": "${HTTP_PROXY}",
+            "httpsProxy": "${HTTPS_PROXY}"
           },
           "contextDir": "${CONTEXT_DIR}"
         },
         "strategy": {
           "type": "Source",
           "sourceStrategy": {
+            "env": [
+              {
+                "name": "HTTP_PROXY",
+                "value": "${HTTP_PROXY}"
+              },
+              {
+                "name": "HTTPS_PROXY",
+                "value": "${HTTPS_PROXY}"
+              }
+            ],
             "from": {
               "kind": "ImageStreamTag",
               "namespace": "openshift",
               "name": "python:3.4"
-            },
-            "env": [
-              {
-                "name": "APP_MODULE",
-                "value": "picha.wsgi"
-              }
-            ]
+            }
           }
         },
         "output": {
@@ -442,6 +447,16 @@
   ],
   "parameters": [
     {
+      "name": "HTTPS_PROXY",
+      "displayName": "HTTPS_PROXY",
+      "description": "Provided by user: oc create new-app -f <template file> -p HTTP_PROXY=http://<ip>:<port>,HTTPS_PROXY=https://<ip>:<port>"
+    },
+    {
+      "name": "HTTP_PROXY",
+      "displayName": "HTTP_PROXY",
+      "description": "Provided by user: oc create new-app -f <template file> -p HTTP_PROXY=http://<ip>:<port>,HTTPS_PROXY=https://<ip>:<port>"
+    },
+    {
       "name": "MEMORY_LIMIT",
       "displayName": "Memory limit",
       "description": "Maximum amount of memory the Django container can use",
@@ -463,7 +478,7 @@
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
       "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
-      "value": "v4-django-psql-redis-celery"
+      "value": "v3-django-psql-redis-simple"
     },
     {
       "name": "CONTEXT_DIR",
