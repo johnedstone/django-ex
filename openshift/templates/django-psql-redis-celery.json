@@ -228,7 +228,7 @@
               {
                 "name": "DISABLE_MIGRATE",
                 "value": "True"
-              },
+              }
             ]
           }
         },
@@ -409,7 +409,7 @@
             "containers": [
               {
                 "name": "${CELERY_SERVICE_NAME}",
-                "image": "${CELERY_SERVICE_NAME}"
+                "image": "${CELERY_SERVICE_NAME}",
                 "readinessProbe": {
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
