@@ -417,6 +417,13 @@
                     "command": ["/opt/app-root/src/.local/bin/celery" , "-A", "picha", "status"]
                   }
                 },
+                "livenessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "exec": {
+                    "command": ["/opt/app-root/src/.local/bin/celery" , "-A", "picha", "status"]
+                  }
+                },
                 "env": [
                   {
                     "name": "DATABASE_SERVICE_NAME",
