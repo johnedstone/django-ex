@@ -1,8 +1,4 @@
 import shlex, subprocess, sys
 from subprocess import PIPE
-args = shlex.split(''' echo celery worker -A picha.celery -B -Q default -n default@%h -l info  ''')
+args = shlex.split('''/usr/bin/bash toss.sh''')
 stdout, stderr = subprocess.Popen(args, stdout=PIPE).communicate()
-#try:
-#    p = subprocess.Popen(args)
-#except Exception as err:
-#    print("Error: {0}".format(err))

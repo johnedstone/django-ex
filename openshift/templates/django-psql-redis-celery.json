@@ -414,14 +414,14 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": ["echo", "/opt/app-root/src/.local/bin/celery" , "-A", "picha", "status"]
+                    "command": ["echo", "celery"]
                   }
                 },
                 "livenessProbe": {
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 30,
                   "exec": {
-                    "command": ["echo", "/opt/app-root/src/.local/bin/celery" , "-A", "picha", "status"]
+                    "command": ["echo", "celery"]
                   }
                 },
                 "env": [
