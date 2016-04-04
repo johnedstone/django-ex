@@ -4,5 +4,5 @@ args = shlex.split(''' celery worker -A picha.celery -B -Q default -n default@%h
 # stdout, stderr = subprocess.Popen(args, stdout=PIPE).communicate()
 try:
     p = subprocess.Popen(args)
-except Exception, e:
-    print(e)
+except Exception as err:
+    print("Error: {0}".format(err))
