@@ -1,3 +1,4 @@
-import shlex, subprocess
+import shlex, subprocess, sys
+from subprocess import PIPE
 args = shlex.split('''celery worker -A picha.celery -B -Q default -n default@%h -l info''')
-p = subprocess.Popen(args)
+stdout, stderr = subprocess.Popen(args, stdout=PIPE).communicate()
