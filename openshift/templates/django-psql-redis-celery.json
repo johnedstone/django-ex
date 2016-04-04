@@ -42,6 +42,21 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
+        "name": "${CELERY_SERVICE_NAME}",
+        "annotations": {
+          "description": "Celery worker and task scheduler"
+        }
+      },
+      "spec": {
+        "selector": {
+          "name": "${CELERY_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
         "name": "${DATABASE_SERVICE_NAME}",
         "annotations": {
           "description": "Exposes the database server"
@@ -107,6 +122,16 @@
       }
     },
     {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_SERVICE_NAME}",
+        "annotations": {
+          "description": "Keeps track of changes in the celery image"
+        }
+      }
+    },
+    {
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
@@ -163,6 +188,70 @@
         "postCommit": {
           "script": "./manage.py test"
         }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to build the application"
+         }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.4"
+            },
+            "env": [
+              {
+                "name": "APP_FILE",
+                "value": "celery_app.py"
+              },
+              {
+                "name": "DISABLE_COLLECTSTATIC",
+                "value": "True"
+              },
+              {
+                "name": "DISABLE_MIGRATE",
+                "value": "True"
+              },
+            ]
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${CELERY_SERVICE_NAME}:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          }
+        ]
       }
     },
     {
@@ -231,6 +320,101 @@
                   "httpGet": {
                     "path": "/health",
                     "port": 8080
+                  }
+                },
+                "env": [
+                  {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_ENGINE",
+                    "value": "${DATABASE_ENGINE}"
+                  },
+                  {
+                    "name": "DATABASE_NAME",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "APP_CONFIG",
+                    "value": "${APP_CONFIG}"
+                  },
+                  {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "${DJANGO_SECRET_KEY}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the celery server"
+         }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+      "triggers": [
+        {
+          "type": "ImageChange",
+          "imageChangeParams": {
+            "automatic": true,
+            "containerNames": [
+              "${CELERY_SERVICE_NAME}"
+            ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "${CELERY_SERVICE_NAME}:latest"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+         }
+      ],
+      "replicas": 1,
+      "selector": {
+        "name": "${CELERY_SERVICE_NAME}"
+      },
+      "template": {
+          "metadata": {
+            "name": "${CELERY_SERVICE_NAME}",
+            "labels": {
+              "name": "${CELERY_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "${CELERY_SERVICE_NAME}",
+                "image": "${CELERY_SERVICE_NAME}"
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": ["/opt/app-root/src/.local/bin/celery" , "-A", "picha", "status"]
                   }
                 },
                 "env": [
@@ -496,6 +680,12 @@
       "displayName": "Redis service name",
       "description": "Redis service name",
       "value": "redis"
+    },
+    {
+      "name": "CELERY_SERVICE_NAME",
+      "displayName": "Celery service name",
+      "description": "Celery service name",
+      "value": "celery"
     },
     {
       "name": "DATABASE_ENGINE",

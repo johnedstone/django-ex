@@ -6,6 +6,13 @@ This is not working at this time
 #### v4-django-psql-redis-celery: my notes
 This is the a bit more complex: django, openshift, postgresql, redis, celery
 
+References:
+  - From the [cloned project](https://github.com/openshift/django-ex "django-ex")
+  - http://www.syncano.com/configuring-running-django-celery-docker-containers-pt-1/
+  - https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+  - http://michal.karzynski.pl/blog/2014/05/18/setting-up-an-asynchronous-task-queue-for-django-using-celery-redis/
+
+
 ### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
