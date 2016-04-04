@@ -45,7 +45,7 @@
             "env": [
               {
                 "name": "APP_MODULE",
-                "value": "picha.wsgi"
+                "value": "project.wsgi"
               }
             ]
           }
