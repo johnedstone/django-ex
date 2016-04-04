@@ -45,7 +45,7 @@
             "env": [
               {
                 "name": "APP_MODULE",
-                "value": "project.wsgi"
+                "value": "picha.wsgi"
               }
             ]
           }
@@ -365,7 +365,7 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-celery-http",
+        "name": "django-psql-redis-celery",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
@@ -379,7 +379,7 @@
            }
         ],
         "selector": {
-          "deploymentConfig": "django-psql-redis-celery"
+          "name": "django-psql-redis-celery"
         }
       }
     },
@@ -387,13 +387,13 @@
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-celery-http-route"
+        "name": "django-psql-redis-celery"
       },
       "spec": {
         "host": "${APPLICATION_DOMAIN}",
         "to": {
           "kind": "Service",
-          "name": "django-celery-http"
+          "name": "django-psql-redis-celery"
         }
       }
     },
@@ -415,7 +415,7 @@
           }
         ],
         "selector": {
-          "deploymentConfig": "${DATABASE_SERVICE_NAME}"
+          "name": "${DATABASE_SERVICE_NAME}"
         }
       }
     },
@@ -437,7 +437,7 @@
           }
         ],
         "selector": {
-          "deploymentConfig": "${REDIS_SERVICE_NAME}"
+          "name": "${REDIS_SERVICE_NAME}"
         }
       }
     }
