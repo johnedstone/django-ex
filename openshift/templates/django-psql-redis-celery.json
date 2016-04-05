@@ -48,6 +48,13 @@
         }
       },
       "spec": {
+        "ports": [
+          {
+            "name": "celery-not-needed",
+            "port": 8080,
+            "targetPort": 8080
+          }
+        ],
         "selector": {
           "name": "${CELERY_SERVICE_NAME}"
         }
