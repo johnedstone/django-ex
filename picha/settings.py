@@ -114,9 +114,9 @@ CELERY_QUEUES = (
 #CELERY_ACCEPT_CONTENT = ['application/json']
 
 if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    # EMAIL_FILE_PATH = '/tmp'
+    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = '/tmp'
     EMAIL_HOST = 'localhost'
     EMAIL_PORT = 1025
     DEFAULT_FROM_EMAIL = 'Picha <picha@example.com>'
