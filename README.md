@@ -1,10 +1,12 @@
-# Openshift quickstart: Django
+# Openshift V3.1 quickstart: Django
 
 #### This is work-in-progress.
-This is not working at this time
 
 #### v4-django-psql-redis-celery: my notes
-This is the a bit more complex: django, openshift, postgresql, redis, celery
+ - django, openshift, postgresql, redis, celery
+ - This works up to step 3, the feedback form at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+ - Next Fix variables to use openshift variables, not the variables left over from docker-compose, those these work
+
 
 References:
   - From the [cloned project](https://github.com/openshift/django-ex "django-ex")

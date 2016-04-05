@@ -414,14 +414,16 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": ["pgrep", "celery"]
+                    "command": ["pgrep", "celery"],
+                    "comment": "The command 'celery -A picha.celery status' did not work.  Maybe it is an env problem"
                   }
                 },
                 "livenessProbe": {
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 30,
                   "exec": {
-                    "command": ["pgrep", "celery"]
+                    "command": ["pgrep", "celery"],
+                    "comment": "The command 'celery -A picha.celery status' did not work.  Maybe it is an env problem"
                   }
                 },
                 "env": [
