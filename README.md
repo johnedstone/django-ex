@@ -1,4 +1,4 @@
-# Openshift quickstart: Django
+### Openshift version 3.1 quickstart: Django
 
 #### django-psql-redis-simple using the Origin Openshift VM
 - This (master) currently is v3 merged into the master branch.  Simpler examples are in v1 and v2
