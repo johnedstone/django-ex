@@ -1,4 +1,5 @@
 import os
+from kombu import Exchange, Queue
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The SECRET_KEY is provided via an environment variable in OpenShift
 SECRET_KEY = os.getenv(
@@ -82,6 +83,7 @@ if DEBUG:
 REDIS_PORT = 6379
 REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', '127.0.0.1')
 
+# https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/ Step 3
 BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
 CELERY_RESULT_BACKEND = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
 
@@ -91,9 +93,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Nairobi'
 
 CELERY_DEFAULT_QUEUE = 'default'
-#CELERY_QUEUES = (
-#    Queue('default', Exchange('default'), routing_key='default'),
-#)
+CELERY_QUEUES = (
+    Queue('default', Exchange('default'), routing_key='default'),
+)
+
+# REDIS_DB = 0
 #CELERY_ALWAYS_EAGER = False
 #CELERY_ACKS_LATE = True
 #CELERY_TASK_PUBLISH_RETRY = True
