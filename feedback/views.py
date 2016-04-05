@@ -8,6 +8,5 @@ class FeedbackView(FormView):
     success_url = '/'
 
     def form_valid(self, form):
-        # form.send_email()
-        print('Mail: {}'.format(form.send_email()))
+        form.send_email()
         return super(FeedbackView, self).form_valid(form)
