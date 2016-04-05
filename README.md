@@ -4,7 +4,8 @@
 
 #### v4-django-psql-redis-celery: my notes
  - django, openshift, postgresql, redis, celery
- - This works up to step 3, the feedback form at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+ - This works up to step 3, the feedback form, at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+ - The mail ends up in the celery pod, in /tmp, in a log file for the session.
  - Next Fix variables to use openshift variables, not the variables left over from docker-compose, those these work
 
 
