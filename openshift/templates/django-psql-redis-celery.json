@@ -414,14 +414,14 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": ["echo", "celery"]
+                    "command": ["celery", "-A", "picha.celery", "status"]
                   }
                 },
                 "livenessProbe": {
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 30,
                   "exec": {
-                    "command": ["echo", "celery"]
+                    "command": ["celery", "-A", "picha.celery", "status"]
                   }
                 },
                 "env": [
