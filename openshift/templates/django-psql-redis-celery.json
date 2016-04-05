@@ -414,14 +414,14 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": ["celery", "-A", "picha.celery", "status"]
+                    "command": ["pgrep", "celery"]
                   }
                 },
                 "livenessProbe": {
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 30,
                   "exec": {
-                    "command": ["celery", "-A", "picha.celery", "status"]
+                    "command": ["pgrep", "celery"]
                   }
                 },
                 "env": [
