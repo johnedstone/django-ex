@@ -1,7 +1,12 @@
 # Openshift quickstart: Django
 
 #### django-psql-redis-simple using the Origin Openshift VM
-- This is v3 merged into the master branch.  Simpler examples are in v1 and v2
+- This (master) currently is v3 merged into the master branch.  Simpler examples are in v1 and v2
+- Notes from v4, work in progress:
+    * django, openshift, postgresql, redis, celery
+    * This works up to step 3, the feedback form, at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+    * The mail ends up in the celery pod, in /tmp, in a log file for the session.
+
 - This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod), and including Windows and proxy information
 - This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the _template_
 
