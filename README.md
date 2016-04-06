@@ -2,12 +2,16 @@
 
 #### This is work-in-progress.
 
-#### v4-django-psql-redis-celery: my notes
- - django, openshift, postgresql, redis, celery
- - This works up to step 3, the feedback form, at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
- - The mail ends up in the celery pod, in /tmp, in a log file for the session.
- - Next Fix variables to use openshift variables, not the variables left over from docker-compose, those these work
+#### History
+  - v4 branch: v4-django-psql-redis-celery
+    * django, openshift, postgresql, redis, celery
+    * This works up to step 3, the feedback form, at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+    * The mail ends up in the celery pod, in /tmp, in a log file for the session.
+    * Next Fix variables to use openshift variables, not the variables left over from docker-compose, those these work
 
+  - v3 branch.: Has notes on adding redis in the image stream, and starting just the pod.  And there are notes on setting the proxy in /etc/sysconfig/docker as well in the template.
+  - v2 branch: Using the postgresql template from the [cloned project](https://github.com/openshift/django-ex "django-ex"). I added the app experiences, as an example. There was one 'bug' in this original template, that was corrected with adding "automatic": true in the postgresql dc, at least in my hands.
+  - v1 branch: This is the simplest form: django, openshift, sqlite3, from the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
 References:
   - From the [cloned project](https://github.com/openshift/django-ex "django-ex")
@@ -16,8 +20,7 @@ References:
   - https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
   - http://michal.karzynski.pl/blog/2014/05/18/setting-up-an-asynchronous-task-queue-for-django-using-celery-redis/
 
-
-### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
+### Notes from the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 

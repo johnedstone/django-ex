@@ -328,6 +328,10 @@
                     "value": "${DATABASE_PASSWORD}"
                   },
                   {
+                    "name": "REDIS_SERVICE_NAME",
+                    "value": "${REDIS_SERVICE_NAME}"
+                  },
+                  {
                     "name": "APP_CONFIG",
                     "value": "${APP_CONFIG}"
                   },
