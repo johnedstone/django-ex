@@ -5,8 +5,7 @@
     "name": "django-psql-redis-celery",
     "annotations": {
       "description": "An example Django application with psql, redis, and celery",
-      "reference": "https://blog.openshift.com/part-2-creating-a-template-a-technical-walkthrough/",
-      "tags": "quickstart,python,django,postgresql,redis",
+      "tags": "quickstart,python,django,postgresql,redis,celery",
       "iconClass": "icon-python"
     }
   },
@@ -20,7 +19,7 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-celery",
+        "name": "django-ex",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
@@ -34,7 +33,7 @@
            }
         ],
         "selector": {
-          "name": "django-psql-redis-celery"
+          "name": "django-ex"
         }
       }
     },
@@ -86,13 +85,13 @@
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-celery"
+        "name": "django-ex"
       },
       "spec": {
         "host": "${APPLICATION_DOMAIN}",
         "to": {
           "kind": "Service",
-          "name": "django-psql-redis-celery"
+          "name": "django-ex"
         }
       }
     },
@@ -100,7 +99,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-celery",
+        "name": "django-ex",
         "annotations": {
           "description": "Keeps track of changes in the application image"
         }
@@ -120,7 +119,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-celery",
+        "name": "django-ex",
         "annotations": {
           "description": "Defines how to build the application"
          }
@@ -153,7 +152,7 @@
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "django-psql-redis-celery:latest"
+            "name": "django-ex:latest"
           }
         },
         "triggers": [
@@ -243,7 +242,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis-celery",
+        "name": "django-ex",
         "annotations": {
           "description": "Defines how to deploy the application server"
          }
@@ -258,11 +257,11 @@
           "imageChangeParams": {
             "automatic": true,
             "containerNames": [
-              "django-psql-redis-celery"
+              "django-ex"
             ],
             "from": {
               "kind": "ImageStreamTag",
-              "name": "django-psql-redis-celery:latest"
+              "name": "django-ex:latest"
             }
           }
         },
@@ -272,20 +271,20 @@
       ],
       "replicas": 1,
       "selector": {
-        "name": "django-psql-redis-celery"
+        "name": "django-ex"
       },
       "template": {
           "metadata": {
-            "name": "django-psql-redis-celery",
+            "name": "django-ex",
             "labels": {
-              "name": "django-psql-redis-celery"
+              "name": "django-ex"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "django-psql-redis-celery",
-                "image": "django-psql-redis-celery",
+                "name": "django-ex",
+                "image": "django-ex",
                 "ports": [
                   {
                     "containerPort": 8080
