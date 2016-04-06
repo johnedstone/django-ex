@@ -42,28 +42,6 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${CELERY_SERVICE_NAME}",
-        "annotations": {
-          "description": "Celery worker and task scheduler"
-        }
-      },
-      "spec": {
-        "ports": [
-          {
-            "name": "celery-not-needed",
-            "port": 8080,
-            "targetPort": 8080
-          }
-        ],
-        "selector": {
-          "name": "${CELERY_SERVICE_NAME}"
-        }
-      }
-    },
-    {
-      "kind": "Service",
-      "apiVersion": "v1",
-      "metadata": {
         "name": "${DATABASE_SERVICE_NAME}",
         "annotations": {
           "description": "Exposes the database server"
@@ -132,7 +110,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${CELERY_SERVICE_NAME}",
+        "name": "${CELERY_POD_NAME}",
         "annotations": {
           "description": "Keeps track of changes in the celery image"
         }
@@ -201,7 +179,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${CELERY_SERVICE_NAME}",
+        "name": "${CELERY_POD_NAME}",
         "annotations": {
           "description": "Defines how to build the application"
          }
@@ -242,7 +220,7 @@
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "${CELERY_SERVICE_NAME}:latest"
+            "name": "${CELERY_POD_NAME}:latest"
           }
         },
         "triggers": [
@@ -374,7 +352,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${CELERY_SERVICE_NAME}",
+        "name": "${CELERY_POD_NAME}",
         "annotations": {
           "description": "Defines how to deploy the celery server"
          }
@@ -389,11 +367,11 @@
           "imageChangeParams": {
             "automatic": true,
             "containerNames": [
-              "${CELERY_SERVICE_NAME}"
+              "${CELERY_POD_NAME}"
             ],
             "from": {
               "kind": "ImageStreamTag",
-              "name": "${CELERY_SERVICE_NAME}:latest"
+              "name": "${CELERY_POD_NAME}:latest"
             }
           }
         },
@@ -403,20 +381,20 @@
       ],
       "replicas": 1,
       "selector": {
-        "name": "${CELERY_SERVICE_NAME}"
+        "name": "${CELERY_POD_NAME}"
       },
       "template": {
           "metadata": {
-            "name": "${CELERY_SERVICE_NAME}",
+            "name": "${CELERY_POD_NAME}",
             "labels": {
-              "name": "${CELERY_SERVICE_NAME}"
+              "name": "${CELERY_POD_NAME}"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "${CELERY_SERVICE_NAME}",
-                "image": "${CELERY_SERVICE_NAME}",
+                "name": "${CELERY_POD_NAME}",
+                "image": "${CELERY_POD_NAME}",
                 "readinessProbe": {
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
@@ -698,7 +676,7 @@
       "value": "redis"
     },
     {
-      "name": "CELERY_SERVICE_NAME",
+      "name": "CELERY_POD_NAME",
       "displayName": "Celery service name",
       "description": "Celery service name",
       "value": "celery"
