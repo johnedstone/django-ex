@@ -626,13 +626,13 @@
   "parameters": [
     {
       "name": "MEMORY_LIMIT",
-      "displayName": "Memory limit",
+      "displayName": "Django Memory limit",
       "description": "Maximum amount of memory the Django container can use",
       "value": "512Mi"
     },
     {
       "name": "MEMORY_POSTGRESQL_LIMIT",
-      "displayName": "Memory limit",
+      "displayName": "Postgresql Memory limit",
       "description": "Maximum amount of memory the PostgreSQL container can use",
       "value": "512Mi"
     },
