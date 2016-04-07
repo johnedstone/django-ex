@@ -111,20 +111,6 @@ CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
 
-# https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/ Step 3
-BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
-CELERY_RESULT_BACKEND = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
-
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
-
-CELERY_DEFAULT_QUEUE = 'default'
-CELERY_QUEUES = (
-    Queue('default', Exchange('default'), routing_key='default'),
-)
-
 ## For later
 # REDIS_DB = 0
 # CELERY_ALWAYS_EAGER = False
