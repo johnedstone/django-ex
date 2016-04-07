@@ -90,11 +90,12 @@ fh.write('REDIS_PORT:{}\n'.format(REDIS_PORT))
 
 REDIS_PORT_A = 6379
 REDIS_HOST_A = os.environ.get('REDIS_PORT_6379_TCP_ADDR', '127.0.0.1')
-REDIS_PORT = 6379
-REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', '127.0.0.1')
 fh.write('REDIS_HOST_A:{}\n'.format(REDIS_HOST_A))
 fh.write('REDIS_PORT_A:{}\n'.format(REDIS_PORT_A))
 fh.close()
+
+REDIS_PORT = 6379
+REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', '127.0.0.1')
 
 # https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/ Step 3
 BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
@@ -109,12 +110,6 @@ CELERY_DEFAULT_QUEUE = 'default'
 CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
-
-## For later
-# REDIS_DB = 0
-fh.write('REDIS_HOST_A:{}\n'.format(REDIS_HOST_A))
-fh.write('REDIS_PORT_A:{}\n'.format(REDIS_PORT_A))
-fh.close()
 
 # https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/ Step 3
 BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
