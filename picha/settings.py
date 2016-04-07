@@ -81,8 +81,12 @@ if DEBUG:
         '172.30.118.161',
     )
 
-REDIS_PORT = 6379
-REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', '127.0.0.1')
+redis_service_name = os.getenv('REDIS_SERVICE_NAME','').upper()
+REDIS_HOST = os.environ.get('{}_SERVICE_HOST'.format(redis_service_name))
+REDIS_PORT = os.getenv('{}_SERVICE_PORT'.format(redis_service_name))
+
+# REDIS_PORT = 6379
+# REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', '127.0.0.1')
 
 # https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/ Step 3
 BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
@@ -98,21 +102,22 @@ CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
 
+## For later
 # REDIS_DB = 0
-#CELERY_ALWAYS_EAGER = False
-#CELERY_ACKS_LATE = True
-#CELERY_TASK_PUBLISH_RETRY = True
-#CELERY_DISABLE_RATE_LIMITS = False
-#CELERY_IGNORE_RESULT = True
-#CELERY_SEND_TASK_ERROR_EMAILS = False
-#CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
-#CELERY_REDIS_MAX_CONNECTIONS = 1
-#CELERY_TASK_RESULT_EXPIRES = 600
-#CELERY_TASK_SERIALIZER = "json"
-#CELERYD_HIJACK_ROOT_LOGGER = False
-#CELERYD_PREFETCH_MULTIPLIER = 1
-#CELERYD_MAX_TASKS_PER_CHILD = 1000
-#CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_ALWAYS_EAGER = False
+# CELERY_ACKS_LATE = True
+# CELERY_TASK_PUBLISH_RETRY = True
+# CELERY_DISABLE_RATE_LIMITS = False
+# CELERY_IGNORE_RESULT = True
+# CELERY_SEND_TASK_ERROR_EMAILS = False
+# CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
+# CELERY_REDIS_MAX_CONNECTIONS = 1
+# CELERY_TASK_RESULT_EXPIRES = 600
+# CELERY_TASK_SERIALIZER = "json"
+# CELERYD_HIJACK_ROOT_LOGGER = False
+# CELERYD_PREFETCH_MULTIPLIER = 1
+# CELERYD_MAX_TASKS_PER_CHILD = 1000
+# CELERY_ACCEPT_CONTENT = ['application/json']
 
 if DEBUG:
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
