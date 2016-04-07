@@ -1,7 +1,5 @@
 # Openshift V3.1 quickstart: Django
 
-#### This is work-in-progress.
-
 #### History
   - v4 branch: v4-django-psql-redis-celery
     * django, openshift, postgresql, redis, celery
