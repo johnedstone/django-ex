@@ -2,22 +2,24 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-redis-simple",
+    "name": "django-psql-redis-celery",
     "annotations": {
-      "description": "An example Django application with a PostgreSQL database and redis",
-      "tags": "quickstart,python,django,postgresql,redis",
+      "description": "An example Django application with psql, redis, and celery",
+      "tags": "quickstart,python,django,postgresql,redis,celery",
       "iconClass": "icon-python"
     }
   },
   "labels": {
-    "template": "django-psql-redis-simple"
+    "template": "django-psql-redis-celery",
+    "application": "django-psql-redis-celery",
+    "createdBy": "template-django-psql-redis-celery"
   },
   "objects": [
     {
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "django-psql-redis",
+        "name": "django-ex",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         }
@@ -31,199 +33,7 @@
            }
         ],
         "selector": {
-          "name": "django-psql-redis"
-        }
-      }
-    },
-    {
-      "kind": "Route",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis"
-      },
-      "spec": {
-        "host": "${APPLICATION_DOMAIN}",
-        "to": {
-          "kind": "Service",
-          "name": "django-psql-redis"
-        }
-      }
-    },
-    {
-      "kind": "ImageStream",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis",
-        "annotations": {
-          "description": "Keeps track of changes in the application image"
-        }
-      }
-    },
-    {
-      "kind": "BuildConfig",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis",
-        "annotations": {
-          "description": "Defines how to build the application"
-         }
-      },
-      "spec": {
-        "source": {
-          "type": "Git",
-          "git": {
-            "uri": "${SOURCE_REPOSITORY_URL}",
-            "ref": "${SOURCE_REPOSITORY_REF}"
-          },
-          "contextDir": "${CONTEXT_DIR}"
-        },
-        "strategy": {
-          "type": "Source",
-          "sourceStrategy": {
-            "from": {
-              "kind": "ImageStreamTag",
-              "namespace": "openshift",
-              "name": "python:3.4"
-            },
-            "env": [
-              {
-                "name": "APP_MODULE",
-                "value": "project.wsgi"
-              }
-            ]
-          }
-        },
-        "output": {
-          "to": {
-            "kind": "ImageStreamTag",
-            "name": "django-psql-redis:latest"
-          }
-        },
-        "triggers": [
-          {
-            "type": "ImageChange"
-          },
-          {
-            "type": "ConfigChange"
-          },
-          {
-            "type": "GitHub",
-            "github": {
-              "secret": "${GITHUB_WEBHOOK_SECRET}"
-            }
-          }
-        ],
-        "postCommit": {
-          "script": "./manage.py test"
-        }
-      }
-    },
-    {
-      "kind": "DeploymentConfig",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "django-psql-redis",
-        "annotations": {
-          "description": "Defines how to deploy the application server"
-         }
-      },
-      "spec": {
-        "strategy": {
-          "type": "Rolling"
-        },
-      "triggers": [
-        {
-          "type": "ImageChange",
-          "imageChangeParams": {
-            "automatic": true,
-            "containerNames": [
-              "django-psql-redis"
-            ],
-            "from": {
-              "kind": "ImageStreamTag",
-              "name": "django-psql-redis:latest"
-            }
-          }
-        },
-        {
-          "type": "ConfigChange"
-         }
-      ],
-      "replicas": 1,
-      "selector": {
-        "name": "django-psql-redis"
-      },
-      "template": {
-          "metadata": {
-            "name": "django-psql-redis",
-            "labels": {
-              "name": "django-psql-redis"
-            }
-          },
-          "spec": {
-            "containers": [
-              {
-                "name": "django-psql-redis",
-                "image": "django-psql-redis",
-                "ports": [
-                  {
-                    "containerPort": 8080
-                  }
-                ],
-                "readinessProbe": {
-                  "timeoutSeconds": 3,
-                  "initialDelaySeconds": 3,
-                  "httpGet": {
-                    "path": "/health",
-                    "port": 8080
-                  }
-                },
-                "livenessProbe": {
-                  "timeoutSeconds": 3,
-                  "initialDelaySeconds": 30,
-                  "httpGet": {
-                    "path": "/health",
-                    "port": 8080
-                  }
-                },
-                "env": [
-                  {
-                    "name": "DATABASE_SERVICE_NAME",
-                    "value": "${DATABASE_SERVICE_NAME}"
-                  },
-                  {
-                    "name": "DATABASE_ENGINE",
-                    "value": "${DATABASE_ENGINE}"
-                  },
-                  {
-                    "name": "DATABASE_NAME",
-                    "value": "${DATABASE_NAME}"
-                  },
-                  {
-                    "name": "DATABASE_USER",
-                    "value": "${DATABASE_USER}"
-                  },
-                  {
-                    "name": "DATABASE_PASSWORD",
-                    "value": "${DATABASE_PASSWORD}"
-                  },
-                  {
-                    "name": "APP_CONFIG",
-                    "value": "${APP_CONFIG}"
-                  },
-                  {
-                    "name": "DJANGO_SECRET_KEY",
-                    "value": "${DJANGO_SECRET_KEY}"
-                  }
-                ],
-                "resources": {
-                  "limits": {
-                    "memory": "${MEMORY_LIMIT}"
-                  }
-                }
-              }
-            ]
-          }
+          "name": "django-ex"
         }
       }
     },
@@ -268,6 +78,384 @@
         ],
         "selector": {
           "name": "${REDIS_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex"
+      },
+      "spec": {
+        "host": "${APPLICATION_DOMAIN}",
+        "to": {
+          "kind": "Service",
+          "name": "django-ex"
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Keeps track of changes in the application image"
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_POD_NAME}",
+        "annotations": {
+          "description": "Keeps track of changes in the celery image"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Defines how to build the application"
+         }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.4"
+            },
+            "env": [
+              {
+                "name": "APP_MODULE",
+                "value": "picha.wsgi"
+              }
+            ]
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "django-ex:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          }
+        ],
+        "postCommit": {
+          "script": "./manage.py test"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_POD_NAME}",
+        "annotations": {
+          "description": "Defines how to build the application"
+         }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.4"
+            },
+            "env": [
+              {
+                "name": "APP_FILE",
+                "value": "celery_app.py"
+              },
+              {
+                "name": "DISABLE_COLLECTSTATIC",
+                "value": "True"
+              },
+              {
+                "name": "DISABLE_MIGRATE",
+                "value": "True"
+              }
+            ]
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${CELERY_POD_NAME}:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Defines how to deploy the application server"
+         }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+      "triggers": [
+        {
+          "type": "ImageChange",
+          "imageChangeParams": {
+            "automatic": true,
+            "containerNames": [
+              "django-ex"
+            ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "django-ex:latest"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+         }
+      ],
+      "replicas": 1,
+      "selector": {
+        "name": "django-ex"
+      },
+      "template": {
+          "metadata": {
+            "name": "django-ex",
+            "labels": {
+              "name": "django-ex"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "django-ex",
+                "image": "django-ex",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 3,
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  }
+                },
+                "env": [
+                  {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_ENGINE",
+                    "value": "${DATABASE_ENGINE}"
+                  },
+                  {
+                    "name": "DATABASE_NAME",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "REDIS_SERVICE_NAME",
+                    "value": "${REDIS_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "APP_CONFIG",
+                    "value": "${APP_CONFIG}"
+                  },
+                  {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "${DJANGO_SECRET_KEY}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_POD_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the celery server"
+         }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+      "triggers": [
+        {
+          "type": "ImageChange",
+          "imageChangeParams": {
+            "automatic": true,
+            "containerNames": [
+              "${CELERY_POD_NAME}"
+            ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "${CELERY_POD_NAME}:latest"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+         }
+      ],
+      "replicas": 1,
+      "selector": {
+        "name": "${CELERY_POD_NAME}"
+      },
+      "template": {
+          "metadata": {
+            "name": "${CELERY_POD_NAME}",
+            "labels": {
+              "name": "${CELERY_POD_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "${CELERY_POD_NAME}",
+                "image": "${CELERY_POD_NAME}",
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "comment": "The command 'celery -A picha.celery status' did not work.  Maybe it is an env problem",
+                  "exec": {
+                    "command": ["pgrep", "celery"]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "comment": "The command 'celery -A picha.celery status' did not work.  Maybe it is an env problem",
+                  "exec": {
+                    "command": ["pgrep", "celery"]
+                  }
+                },
+                "env": [
+                  {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_ENGINE",
+                    "value": "${DATABASE_ENGINE}"
+                  },
+                  {
+                    "name": "DATABASE_NAME",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "REDIS_SERVICE_NAME",
+                    "value": "${REDIS_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "APP_CONFIG",
+                    "value": "${APP_CONFIG}"
+                  },
+                  {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "${DJANGO_SECRET_KEY}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
         }
       }
     },
@@ -442,13 +630,13 @@
   "parameters": [
     {
       "name": "MEMORY_LIMIT",
-      "displayName": "Memory limit",
+      "displayName": "Django Memory limit",
       "description": "Maximum amount of memory the Django container can use",
       "value": "512Mi"
     },
     {
       "name": "MEMORY_POSTGRESQL_LIMIT",
-      "displayName": "Memory limit",
+      "displayName": "Postgresql Memory limit",
       "description": "Maximum amount of memory the PostgreSQL container can use",
       "value": "512Mi"
     },
@@ -462,7 +650,7 @@
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
       "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
-      "value": "v3-django-psql-redis-simple"
+      "value": "v4-django-psql-redis-celery"
     },
     {
       "name": "CONTEXT_DIR",
@@ -493,6 +681,12 @@
       "displayName": "Redis service name",
       "description": "Redis service name",
       "value": "redis"
+    },
+    {
+      "name": "CELERY_POD_NAME",
+      "displayName": "Celery service name",
+      "description": "Celery service name",
+      "value": "celery"
     },
     {
       "name": "DATABASE_ENGINE",

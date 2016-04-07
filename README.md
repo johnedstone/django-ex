@@ -1,70 +1,33 @@
-### Openshift version 3.1 quickstart: Django
+# Openshift V3.1 quickstart: Django
 
-#### django-psql-redis-simple using the Origin Openshift VM
-- This (master) currently is v3 merged into the master branch.  Simpler examples are in v1 and v2
-- Notes from v4, work in progress:
+#### This master branch is a copy of v4_ branch
+v5_ branch is a work in progress
+
+#### History
+  - v4 branch: v4-django-psql-redis-celery
     * django, openshift, postgresql, redis, celery
     * This works up to step 3, the feedback form, at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
     * The mail ends up in the celery pod, in /tmp, in a log file for the session.
+    * Template for this branch is ```django-psql-redis-celery.json```.
 
-- This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod), and including Windows and proxy information
-- This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the _template_
+  - v3 branch.: Has notes on adding redis in the image stream, and starting just the pod.  And there are notes on setting the proxy in /etc/sysconfig/docker as well in the template.
+  - v2 branch: Using the postgresql template from the [cloned project](https://github.com/openshift/django-ex "django-ex"). I added the app experiences, as an example. There was one 'bug' in this original template, that was corrected with adding "automatic": true in the postgresql dc, at least in my hands.
+  - v1 branch: This is the simplest form: django, openshift, sqlite3, from the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
-##### How to import a docker image and image stream - both of these two methods worked.  The second worked in the Windows env, that was proxy'd
-- Put simply, it appears push creates the image stream 
+References:
+  - From the [cloned project](https://github.com/openshift/django-ex "django-ex")
+  - http://www.syncano.com/configuring-running-django-celery-docker-containers-pt-1/
+  - https://www.syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/
+  - https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+  - http://michal.karzynski.pl/blog/2014/05/18/setting-up-an-asynchronous-task-queue-for-django-using-celery-redis/
 
-    ```
-   <as root>
-   docker pull redis:2.8.19
-   docker tag docker.io/redis:2.8.19 172.30.210.155:5000/openshift/redis:2.8.19
-   docker push 172.30.210.155:5000/openshift/redis:2.8.19
-   docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
-    ```
-
-- This reference worked as well, but too complicated: http://www.opensourcerers.org/importing-an-external-docker-image-into-red-hat-openshift-v3/
-
-    ```
-    sudo docker pull redis:2.8.19
-    sudo docker tag docker.io/redis:2.8.19 172.30.210.155:5000/openshift/redis:2.8.19
-
-    <as root>
-    oc login <admin>
-    docker login -u admin -e a@b.com -p $(oc whoami -t) 172.30.210.155:5000
-    docker push 172.30.210.155:5000/openshift/redis:2.8.19
-
-
-    oc get is -n openshift |egrep redis <confirms image stream was created>
-    docker rmi -f 98706ddebd02 <remove image (id of redis pull and tagged image) to confirm it will be created in the build>
-    ```
-
-##### Using the Origin Openshift VM on Windows and in a proxy'd environment
-- Reference: https://www.openshift.org/vm/
-  * Install Vagrant and Virtual Box for Windows
-  * Instal 64 bit cygwin base plus openssh
-- Open cygwin teminal, and make a dir to work in
-- ```export PATH=/cygdrive/c/HashiCorp/Vagrant/bin:$PATH```
-- export https_proxy=ip:port
-- From the reference: ```vagrant init ....```
-- From the reference: ```vagrant ssh ...```
-- Once in the container, sudo su - add the following to /etc/sysconfig/docker and restart docker
-
-    ```
-    HTTPS_PROXY=https://ip address:port
-    HTTP_PROXY=http://ip address:port
-    NO_PROXY=172.30.210.155
-    ```
-
-- Continue to work, not as root, with the oc commands in the VM
-- When finished, exit the VM and run ```vagrant suspend```
-- When starting again, run ```vagrant resume```
-
-### From the [cloned project](https://github.com/openshift/django-ex "django-ex")
+### Notes from the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
 This is a [Django](http://www.djangoproject.com) project that you can use as the starting point to develop your own and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 
 The steps in this document assume that you have access to an OpenShift deployment that you can deploy applications on.
 
-## What has been done for you
+#### What has been done for you
 
 This is a minimal Django 1.8 project. It was created with these steps:
 
