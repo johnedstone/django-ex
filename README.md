@@ -1,10 +1,15 @@
 # Openshift quickstart: Django
 
-### v3-django-psql-redis-simple using the Origin Openshift VM
+### v3-django-psql-redis-simple using the Origin Openshift VM, version 1.1.4
 - This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
-- This version shows how to set the proxy in ```/etc/sysconfig/docker``` as well in the template
+- This version shows how to set the proxy, if needed,  in ```/etc/sysconfig/docker``` as well in the template
+- Preferred template for this version is now ```django-psql-redis-simple-simplified.json```, not ```django-psql-redis-simple.json```.
+- The proxy template needs to be updated with the changes made in the ```simplified``` template.
 
 #### How to import a docker image and image stream - both of these two methods worked.  The second worked in the Windows env, that was proxy'd
+#####This is no longer needed with the ```simplified``` template.  That is, the redis image does not need to be pushed to the integrated docker registry, but can exist in the docker local image.
+
+#####But if one wants to push redis into the integrated docker registry, then the following applies.
 - Put simply, it appears push creates the image stream 
 
     ```
