@@ -1,4 +1,4 @@
-# Openshift V3.1 quickstart: Django
+# Openshift V3.1 quickstart: Django - based on Origin's VM 1.1.4
 
 ####This master branch is a copy of v4_ branch
 v5_ branch is a work in progress
