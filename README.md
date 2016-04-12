@@ -1,6 +1,6 @@
 # Openshift V3.1 quickstart: Django
 
-#### This master branch is a copy of v4_ branch
+####This master branch is a copy of v4_ branch
 v5_ branch is a work in progress
 
 #### History
@@ -10,7 +10,7 @@ v5_ branch is a work in progress
     * The mail ends up in the celery pod, in /tmp, in a log file for the session.
     * Template for this branch is ```django-psql-redis-celery.json```.
 
-  - v3 branch.: Has notes on adding redis in the image stream, and starting just the pod.  And there are notes on setting the proxy in /etc/sysconfig/docker as well in the template.
+  - v3 branch: Has notes on adding redis in the image stream (which is no longer needed, as noted there) , and starting just the redis pod.  And there are notes on setting the proxy in /etc/sysconfig/docker as well in the template.
   - v2 branch: Using the postgresql template from the [cloned project](https://github.com/openshift/django-ex "django-ex"). I added the app experiences, as an example. There was one 'bug' in this original template, that was corrected with adding "automatic": true in the postgresql dc, at least in my hands.
   - v1 branch: This is the simplest form: django, openshift, sqlite3, from the [cloned project](https://github.com/openshift/django-ex "django-ex")
 
