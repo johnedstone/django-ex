@@ -82,6 +82,28 @@
       }
     },
     {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${RABBITMQ_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the rabbitmq server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "rabbitmq",
+            "port": 5672,
+            "targetPort": 5672
+          }
+        ],
+        "selector": {
+          "name": "${RABBITMQ_SERVICE_NAME}"
+        }
+      }
+    },
+    {
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
@@ -606,6 +628,82 @@
                   "tcpSocket": {
                     "port": 6379
                   }
+                },
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_REDIS_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${RABBITMQ_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy rabbitmq"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${RABBITMQ_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${RABBITMQ_SERVICE_NAME}",
+            "labels": {
+              "name": "${RABBITMQ_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "rabbitmq",
+                "image": "tutum/rabbitmq",
+                "ports": [
+                  {
+                    "containerPort": 5672,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "RABBITMQ_PASS",
+                    "value": "${RABBITMQ_PASSWORD}"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "echo", "hello world" ]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port":5672 
+                  }
+                },
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_REDIS_LIMIT}"
+                  }
                 }
               }
             ]
@@ -619,12 +717,6 @@
       "name": "MEMORY_LIMIT",
       "displayName": "Django Memory limit",
       "description": "Maximum amount of memory the Django container can use",
-      "value": "512Mi"
-    },
-    {
-      "name": "MEMORY_POSTGRESQL_LIMIT",
-      "displayName": "Postgresql Memory limit",
-      "description": "Maximum amount of memory the PostgreSQL container can use",
       "value": "512Mi"
     },
     {
@@ -664,18 +756,6 @@
       "value": "postgresql"
     },
     {
-      "name": "REDIS_SERVICE_NAME",
-      "displayName": "Redis service name",
-      "description": "Redis service name",
-      "value": "redis"
-    },
-    {
-      "name": "CELERY_POD_NAME",
-      "displayName": "Celery service name",
-      "description": "Celery service name",
-      "value": "celery"
-    },
-    {
       "name": "DATABASE_ENGINE",
       "displayName": "Database engine",
       "description": "Database engine: postgresql, mysql or sqlite (default)",
@@ -699,6 +779,49 @@
       "description": "Database user password",
       "generate": "expression",
       "from": "[a-zA-Z0-9]{16}"
+    },
+    {
+      "name": "MEMORY_POSTGRESQL_LIMIT",
+      "displayName": "Postgresql Memory limit",
+      "description": "Maximum amount of memory the PostgreSQL container can use",
+      "value": "512Mi"
+    },
+    {
+      "name": "REDIS_SERVICE_NAME",
+      "displayName": "Redis service name",
+      "description": "Redis service name",
+      "value": "redis"
+    },
+    {
+      "name": "MEMORY_REDIS_LIMIT",
+      "displayName": "Redis Memory limit",
+      "description": "Maximum amount of memory the redis container can use",
+      "value": "512Mi"
+    },
+    {
+      "name": "RABBITMQ_PASS",
+      "displayName": "rabbitmq password",
+      "description": "rabbitmq password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
+    },
+    {
+      "name": "RABBITMQ_SERVICE_NAME",
+      "displayName": "rabbitmq service name",
+      "description": "rabbitmq service name",
+      "value": "rabbitmq"
+    },
+    {
+      "name": "MEMORY_RABBITMQ_LIMIT",
+      "displayName": "RabbitMQ Memory limit",
+      "description": "Maximum amount of memory the RabbitMQ container can use",
+      "value": "512Mi"
+    },
+    {
+      "name": "CELERY_POD_NAME",
+      "displayName": "Celery service name",
+      "description": "Celery service name",
+      "value": "celery"
     },
     {
       "name": "APP_CONFIG",
