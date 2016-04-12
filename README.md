@@ -1,4 +1,4 @@
-# Openshift quickstart: Django
+# Openshift quickstart: Django - based on Origin's VM 1.1.4
 
 ### v3-django-psql-redis-simple using the Origin Openshift VM, version 1.1.4
 - This is the a bit more complex than the original django-ex: django, openshift, postgresql, redis (just the pod)
