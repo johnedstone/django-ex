@@ -566,45 +566,32 @@
         },
         "triggers": [
           {
-            "type": "ImageChange",
-            "imageChangeParams": {
-              "automatic": true,
-              "containerNames": [
-                "redis"
-              ],
-            "from": {
-              "kind": "ImageStreamTag",
-              "namespace": "openshift",
-              "name": "redis:2.8.19"
-            }
+            "type": "ConfigChange"
           }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${REDIS_SERVICE_NAME}"
         },
-        {
-          "type": "ConfigChange"
-        }
-      ],
-          "replicas": 1,
-          "selector": {
-            "name": "${REDIS_SERVICE_NAME}"
+        "template": {
+          "metadata": {
+            "name": "${REDIS_SERVICE_NAME}",
+            "labels": {
+              "name": "${REDIS_SERVICE_NAME}"
+            }
           },
-          "template": {
-            "metadata": {
-              "name": "${REDIS_SERVICE_NAME}",
-              "labels": {
-                "name": "${REDIS_SERVICE_NAME}"
-              }
-            },
-            "spec": {
-              "containers": [
-                {
-                  "name": "redis",
-                  "image": "redis",
-                  "ports": [
-                    {
-                      "containerPort": 6379
-                    }
-                  ],
-                  "env": [
+          "spec": {
+            "containers": [
+              {
+                "name": "redis",
+                "image": "redis:2.8.19",
+                "ports": [
+                  {
+                    "containerPort": 6379,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
                 ],
                 "readinessProbe": {
                   "timeoutSeconds": 1,
