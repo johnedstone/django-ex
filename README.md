@@ -1,4 +1,4 @@
-# Openshift quickstart: Django
+# Openshift quickstart: Django - based on Origin's VM 1.1.4
 
 ### v1-django-simple - my notes
 This is the simplest form: django, openshift, sqlite3
