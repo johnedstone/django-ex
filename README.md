@@ -1,4 +1,4 @@
-# Openshift V3.1 quickstart: Django
+# Openshift V3.1 quickstart: Django - based on Origin's VM 1.1.4
 
 #### History
   - v4 branch: v4-django-psql-redis-celery
