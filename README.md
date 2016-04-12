@@ -1,4 +1,4 @@
-# Openshift quickstart: Django
+# Openshift quickstart: Django - based on Origin's VM 1.1.4
 
 ### v2-django-psql - my notes
 This is the a bit more complex: django, openshift, postgresql
