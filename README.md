@@ -1,4 +1,4 @@
-# Openshift V3.1 quickstart: Django
+# Openshift V3.1 quickstart: Django - based on Origin's VM 1.1.4
 
 ####v5-django-psql-redis-celery-rabbitmq
   - This is a work in progress
