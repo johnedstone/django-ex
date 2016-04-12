@@ -2,17 +2,17 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-redis-celery",
+    "name": "django-psql-redis-celery-rabbitmq",
     "annotations": {
-      "description": "An example Django application with psql, redis, and celery",
-      "tags": "quickstart,python,django,postgresql,redis,celery",
+      "description": "An example Django application with psql, redis, celery, and rabbitmq",
+      "tags": "quickstart,python,django,postgresql,redis,celery,rabbitmq",
       "iconClass": "icon-python"
     }
   },
   "labels": {
-    "template": "django-psql-redis-celery",
-    "application": "django-psql-redis-celery",
-    "createdBy": "template-django-psql-redis-celery"
+    "template": "django-psql-redis-celery-rabbitmq",
+    "application": "django-psql-redis-celery-rabbitmq",
+    "createdBy": "johnedstone"
   },
   "objects": [
     {
@@ -361,12 +361,7 @@
                     "name": "DJANGO_SECRET_KEY",
                     "value": "${DJANGO_SECRET_KEY}"
                   }
-                ],
-                "resources": {
-                  "limits": {
-                    "memory": "${MEMORY_LIMIT}"
-                  }
-                }
+                ]
               }
             ]
           }
@@ -561,11 +556,6 @@
                   "tcpSocket": {
                     "port": 5432
                   }
-                },
-                "resources": {
-                  "limits": {
-                    "memory": "${MEMORY_POSTGRESQL_LIMIT}"
-                  }
                 }
               }
             ]
@@ -628,11 +618,6 @@
                   "tcpSocket": {
                     "port": 6379
                   }
-                },
-                "resources": {
-                  "limits": {
-                    "memory": "${MEMORY_REDIS_LIMIT}"
-                  }
                 }
               }
             ]
@@ -690,7 +675,7 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": [ "/bin/sh", "echo", "hello world" ]
+                    "command": [ "rabbitmqctl", "cluster_status" ]
                   }
                 },
                 "livenessProbe": {
@@ -698,11 +683,6 @@
                   "initialDelaySeconds": 30,
                   "tcpSocket": {
                     "port":5672 
-                  }
-                },
-                "resources": {
-                  "limits": {
-                    "memory": "${MEMORY_REDIS_LIMIT}"
                   }
                 }
               }
@@ -781,22 +761,10 @@
       "from": "[a-zA-Z0-9]{16}"
     },
     {
-      "name": "MEMORY_POSTGRESQL_LIMIT",
-      "displayName": "Postgresql Memory limit",
-      "description": "Maximum amount of memory the PostgreSQL container can use",
-      "value": "512Mi"
-    },
-    {
       "name": "REDIS_SERVICE_NAME",
       "displayName": "Redis service name",
       "description": "Redis service name",
       "value": "redis"
-    },
-    {
-      "name": "MEMORY_REDIS_LIMIT",
-      "displayName": "Redis Memory limit",
-      "description": "Maximum amount of memory the redis container can use",
-      "value": "512Mi"
     },
     {
       "name": "RABBITMQ_PASS",
@@ -810,12 +778,6 @@
       "displayName": "rabbitmq service name",
       "description": "rabbitmq service name",
       "value": "rabbitmq"
-    },
-    {
-      "name": "MEMORY_RABBITMQ_LIMIT",
-      "displayName": "RabbitMQ Memory limit",
-      "description": "Maximum amount of memory the RabbitMQ container can use",
-      "value": "512Mi"
     },
     {
       "name": "CELERY_POD_NAME",
