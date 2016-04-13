@@ -88,6 +88,8 @@ REDIS_DB = 0
 
 # This works too, from docker-compose, but reconstructing from OSE variables
 # RABBIT_HOSTNAME = os.environ.get('RABBIT_PORT_5672_TCP', 'localhost:5672')
+
+rabbitmq_service_name = os.getenv('RABBITMQ_SERVICE_NAME','').upper()
 RABBIT_HOST = os.environ.get('{}_SERVICE_HOST'.format(rabbitmq_service_name), '127.0.0.1')
 RABBIT_PORT = os.environ.get('{}_SERVICE_PORT'.format(rabbitmq_service_name), '5672')
 RABBIT_HOSTNAME = 'tcp://{}:{}'.format(RABBIT_HOST, RABBIT_PORT)
@@ -125,7 +127,7 @@ CELERY_TASK_PUBLISH_RETRY = True
 CELERY_DISABLE_RATE_LIMITS = False
 CELERY_IGNORE_RESULT = True
 CELERY_SEND_TASK_ERROR_EMAILS = False
-CELERY_RESULT_BACKEND = 'redis://{host}:{port}/%d'.format(host=REDIS_HOST,port=REDIS_PORT, REDIS_DB)
+CELERY_RESULT_BACKEND = 'redis://{host}:{port}/{db}'.format(host=REDIS_HOST,port=REDIS_PORT, db=REDIS_DB)
 CELERY_REDIS_MAX_CONNECTIONS = 1
 CELERY_TASK_RESULT_EXPIRES = 600
 CELERY_TASK_SERIALIZER = 'json'
