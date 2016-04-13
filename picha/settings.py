@@ -86,10 +86,11 @@ REDIS_HOST = os.environ.get('{}_SERVICE_HOST'.format(redis_service_name), '127.0
 REDIS_PORT = os.getenv('{}_SERVICE_PORT'.format(redis_service_name))
 REDIS_DB = 0
 
+# This works too, from docker-compose, but reconstructing from OSE variables
 # RABBIT_HOSTNAME = os.environ.get('RABBIT_PORT_5672_TCP', 'localhost:5672')
 RABBIT_HOST = os.environ.get('{}_SERVICE_HOST'.format(rabbitmq_service_name), '127.0.0.1')
 RABBIT_PORT = os.environ.get('{}_SERVICE_PORT'.format(rabbitmq_service_name), '5672')
-RABBIT_HOSTNAME = '{}:{}'.format(RABBIT_HOST, RABBIT_PORT)
+RABBIT_HOSTNAME = 'tcp://{}:{}'.format(RABBIT_HOST, RABBIT_PORT)
 
 if RABBIT_HOSTNAME.startswith('tcp://'):
     RABBIT_HOSTNAME = RABBIT_HOSTNAME.split('//')[1]
