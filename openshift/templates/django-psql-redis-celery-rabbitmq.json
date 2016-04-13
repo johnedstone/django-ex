@@ -457,6 +457,14 @@
                     "value": "${REDIS_SERVICE_NAME}"
                   },
                   {
+                    "name": "RABBITMQ_SERVICE_NAME",
+                    "value": "${RABBITMQ_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "RABBITMQ_PASS",
+                    "value": "${RABBITMQ_PASSWORD}"
+                  },
+                  {
                     "name": "APP_CONFIG",
                     "value": "${APP_CONFIG}"
                   },
