@@ -717,7 +717,7 @@
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
       "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
-      "value": "v4-django-psql-redis-celery"
+      "value": "v5-django-psql-redis-celery-rabbitmq"
     },
     {
       "name": "CONTEXT_DIR",
