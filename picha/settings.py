@@ -114,7 +114,7 @@ if not BROKER_URL.endswith(BROKER_HEARTBEAT):
 BROKER_POOL_LIMIT = 1
 BROKER_CONNECTION_TIMEOUT = 10
 
-BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
+BROKER_URL_REDIS_NOT_USING = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
 
 CELERY_DEFAULT_QUEUE = 'default'
 CELERY_QUEUES = (
