@@ -488,7 +488,7 @@
                     "name": "DJANGO_SECRET_KEY",
                     "value": "${DJANGO_SECRET_KEY}"
                   }
-                ]
+                ],
                 "resources": {
                   "limits": {
                     "memory": "${MEMORY_LIMIT}"
