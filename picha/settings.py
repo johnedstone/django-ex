@@ -103,8 +103,10 @@ BROKER_URL = os.environ.get('BROKER_URL',
 
 if not BROKER_URL:
     BROKER_URL = 'amqp://{user}:{password}@{hostname}/{vhost}/'.format(
-        user=os.environ.get('RABBIT_ENV_USER', 'admin-or-something'),
-        password=os.environ.get('RABBIT_ENV_RABBITMQ_PASS', 'mypass-or-something'),
+        # user=os.environ.get('RABBIT_ENV_USER', 'admin-or-something'),
+        user=os.environ.get('RABBITMQ_USER', 'admin-or-something'),
+        # password=os.environ.get('RABBIT_ENV_RABBITMQ_PASS', 'mypass-or-something'), # left over from docker compose
+        password=os.environ.get('RABBITMQ_PASS', 'mypass-or-something'),
         hostname=RABBIT_HOSTNAME,
         vhost=os.environ.get('RABBIT_ENV_VHOST', ''))
 # We don't want to have dead connections stored on rabbitmq, so we have to negotiate using heartbeats

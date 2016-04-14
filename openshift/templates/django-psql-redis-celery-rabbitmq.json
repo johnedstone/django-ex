@@ -354,6 +354,18 @@
                     "value": "${REDIS_SERVICE_NAME}"
                   },
                   {
+                    "name": "RABBITMQ_SERVICE_NAME",
+                    "value": "${RABBITMQ_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "RABBITMQ_USER",
+                    "value": "${RABBITMQ_USER}"
+                  },
+                  {
+                    "name": "RABBITMQ_PASS",
+                    "value": "${RABBITMQ_PASS}"
+                  },
+                  {
                     "name": "APP_CONFIG",
                     "value": "${APP_CONFIG}"
                   },
@@ -461,8 +473,12 @@
                     "value": "${RABBITMQ_SERVICE_NAME}"
                   },
                   {
+                    "name": "RABBITMQ_USER",
+                    "value": "${RABBITMQ_USER}"
+                  },
+                  {
                     "name": "RABBITMQ_PASS",
-                    "value": "${RABBITMQ_PASSWORD}"
+                    "value": "${RABBITMQ_PASS}"
                   },
                   {
                     "name": "APP_CONFIG",
@@ -472,7 +488,7 @@
                     "name": "DJANGO_SECRET_KEY",
                     "value": "${DJANGO_SECRET_KEY}"
                   }
-                ],
+                ]
                 "resources": {
                   "limits": {
                     "memory": "${MEMORY_LIMIT}"
@@ -775,6 +791,12 @@
       "value": "redis"
     },
     {
+      "name": "RABBITMQ_SERVICE_NAME",
+      "displayName": "rabbitmq service name",
+      "description": "rabbitmq service name",
+      "value": "rabbitmq"
+    },
+    {
       "name": "RABBITMQ_PASS",
       "displayName": "rabbitmq password",
       "description": "rabbitmq password",
@@ -782,10 +804,10 @@
       "from": "[a-zA-Z0-9]{16}"
     },
     {
-      "name": "RABBITMQ_SERVICE_NAME",
-      "displayName": "rabbitmq service name",
-      "description": "rabbitmq service name",
-      "value": "rabbitmq"
+      "name": "RABBITMQ_USER",
+      "displayName": "rabbitmq user",
+      "description": "rabbitmq user",
+      "value": "admin"
     },
     {
       "name": "CELERY_POD_NAME",
