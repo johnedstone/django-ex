@@ -9,5 +9,6 @@ gunicorn==19.3.0
 kombu==3.0.35
 pytz==2016.3
 redis==2.10.3
+requests==2.9.1
 sqlparse==0.1.19
 whitenoise==1.0.6
