@@ -18,7 +18,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # custom apps
     'experiences',
-    #'feedback',
+    'feedback',
+    'photos',
     'welcome',
 )
 MIDDLEWARE_CLASSES = (
