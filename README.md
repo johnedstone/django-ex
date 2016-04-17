@@ -1,9 +1,13 @@
 # Openshift V3.1 quickstart: Django - based on Origin's VM 1.1.4
 
-####v5-django-psql-redis-celery-rabbitmq
-  - This is a work in progress
+This is the  branch v5-django-psql-redis-celery-rabbitmq
 
-#### History
+#### Branches
+
+  - v5-django-psql-redis-celery-rabbitmq
+    * This finishes all of the ideas of the [picha project](https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/) and uses some of the ideas from the [docker-compose example](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/) regarding celery.
+    * Template for this branch, v5, is ```openshift/templates/django-psql-redis-celery-rabbitmq.json```
+
   - v4 branch: v4-django-psql-redis-celery
     * django, openshift, postgresql, redis, celery
     * This works up to step 3, the feedback form, at https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
@@ -16,7 +20,7 @@
 
 References:
   - From the [cloned project](https://github.com/openshift/django-ex "django-ex")
-  - http://www.syncano.com/configuring-running-django-celery-docker-containers-pt-1/
+  - https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/
   - https://www.syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/
   - https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
   - http://michal.karzynski.pl/blog/2014/05/18/setting-up-an-asynchronous-task-queue-for-django-using-celery-redis/
