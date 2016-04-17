@@ -18,7 +18,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # custom apps
     'experiences',
-    #'feedback',
+    'feedback',
+    'photos',
     'welcome',
 )
 MIDDLEWARE_CLASSES = (
@@ -82,39 +83,63 @@ if DEBUG:
     )
 
 redis_service_name = os.getenv('REDIS_SERVICE_NAME','').upper()
-REDIS_HOST = os.environ.get('{}_SERVICE_HOST'.format(redis_service_name))
+REDIS_HOST = os.environ.get('{}_SERVICE_HOST'.format(redis_service_name), '127.0.0.1')
 REDIS_PORT = os.getenv('{}_SERVICE_PORT'.format(redis_service_name))
+REDIS_DB = 0
 
-# https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/ Step 3
-BROKER_URL = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
-CELERY_RESULT_BACKEND = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
+# This works too, from docker-compose, but reconstructing from OSE variables
+# RABBIT_HOSTNAME = os.environ.get('RABBIT_PORT_5672_TCP', 'localhost:5672')
 
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
+rabbitmq_service_name = os.getenv('RABBITMQ_SERVICE_NAME','').upper()
+RABBIT_HOST = os.environ.get('{}_SERVICE_HOST'.format(rabbitmq_service_name), '127.0.0.1')
+RABBIT_PORT = os.environ.get('{}_SERVICE_PORT'.format(rabbitmq_service_name), '5672')
+RABBIT_HOSTNAME = 'tcp://{}:{}'.format(RABBIT_HOST, RABBIT_PORT)
+
+if RABBIT_HOSTNAME.startswith('tcp://'):
+    RABBIT_HOSTNAME = RABBIT_HOSTNAME.split('//')[1]
+BROKER_URL = os.environ.get('BROKER_URL',
+                            '')
+# From oc attach rabbitmq-pod
+#  curl --user admin:<RABBITMQ_PASS> http://<host>:<port>/api/vhosts
+
+if not BROKER_URL:
+    BROKER_URL = 'amqp://{user}:{password}@{hostname}/{vhost}/'.format(
+        # user=os.environ.get('RABBIT_ENV_USER', 'admin-or-something'),
+        user=os.environ.get('RABBITMQ_USER', 'admin-or-something'),
+        # password=os.environ.get('RABBIT_ENV_RABBITMQ_PASS', 'mypass-or-something'), # left over from docker compose
+        password=os.environ.get('RABBITMQ_PASS', 'mypass-or-something'),
+        hostname=RABBIT_HOSTNAME,
+        vhost=os.environ.get('RABBIT_ENV_VHOST', ''))
+# We don't want to have dead connections stored on rabbitmq, so we have to negotiate using heartbeats
+BROKER_HEARTBEAT = '?heartbeat=30'
+if not BROKER_URL.endswith(BROKER_HEARTBEAT):
+    BROKER_URL += BROKER_HEARTBEAT
+BROKER_POOL_LIMIT = 1
+BROKER_CONNECTION_TIMEOUT = 10
+
+BROKER_URL_REDIS_NOT_USING = 'redis://{host}:{port}'.format(host=REDIS_HOST,port=REDIS_PORT)
 
 CELERY_DEFAULT_QUEUE = 'default'
 CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
 
-## For later
-# REDIS_DB = 0
-# CELERY_ALWAYS_EAGER = False
-# CELERY_ACKS_LATE = True
-# CELERY_TASK_PUBLISH_RETRY = True
-# CELERY_DISABLE_RATE_LIMITS = False
-# CELERY_IGNORE_RESULT = True
-# CELERY_SEND_TASK_ERROR_EMAILS = False
-# CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
-# CELERY_REDIS_MAX_CONNECTIONS = 1
-# CELERY_TASK_RESULT_EXPIRES = 600
-# CELERY_TASK_SERIALIZER = "json"
-# CELERYD_HIJACK_ROOT_LOGGER = False
-# CELERYD_PREFETCH_MULTIPLIER = 1
-# CELERYD_MAX_TASKS_PER_CHILD = 1000
-# CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_ALWAYS_EAGER = False
+CELERY_ACKS_LATE = True
+CELERY_TASK_PUBLISH_RETRY = True
+CELERY_DISABLE_RATE_LIMITS = False
+CELERY_IGNORE_RESULT = True
+CELERY_SEND_TASK_ERROR_EMAILS = False
+CELERY_RESULT_BACKEND = 'redis://{host}:{port}/{db}'.format(host=REDIS_HOST,port=REDIS_PORT, db=REDIS_DB)
+CELERY_REDIS_MAX_CONNECTIONS = 1
+CELERY_TASK_RESULT_EXPIRES = 600
+CELERY_TASK_SERIALIZER = 'json'
+CELERYD_HIJACK_ROOT_LOGGER = False
+CELERYD_PREFETCH_MULTIPLIER = 1
+CELERYD_MAX_TASKS_PER_CHILD = 1000
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TIMEZONE = 'Africa/Nairobi'
+CELERY_RESULT_SERIALIZER = 'json'
 
 if DEBUG:
     # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
