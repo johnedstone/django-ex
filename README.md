@@ -1,7 +1,8 @@
 # Openshift V3.1 quickstart: Django - based on Origin's VM 1.1.4
 
-This is the branch v6-django-psql-redis-celery-rabbitmq-rest
-Work in progress
+This is the branch v6-django-psql-redis-celery-rabbitmq-rest.
+
+Work in progress.
 
 #### Branches
 
