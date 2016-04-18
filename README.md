@@ -8,7 +8,7 @@ Work in progress.
 
   - v6-django-psql-redis-celery-rabbitmq-rest
     * Adding a REST API as suggested by [syncano](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/).  This working REST API is slightly different from [syncano](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/), which doesn't exactly work as they described it.
-    * Template for v6 is ```<put template here>```
+    * Template for v6 is ```openshift/templates/django-psql-redis-celery-rabbitmq.json```
 
   - v5-django-psql-redis-celery-rabbitmq
     * This finishes all of the ideas of the [picha project](https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/) and uses some of the ideas from the [docker-compose example](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/) regarding celery.
