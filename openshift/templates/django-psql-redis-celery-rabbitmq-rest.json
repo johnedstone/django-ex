@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-psql-redis-celery-rabbitmq",
+    "name": "django-psql-redis-celery-rabbitmq-rest",
     "annotations": {
       "description": "An example Django application with psql, redis, celery, and rabbitmq",
       "tags": "quickstart,python,django,postgresql,redis,celery,rabbitmq",
@@ -10,8 +10,8 @@
     }
   },
   "labels": {
-    "template": "django-psql-redis-celery-rabbitmq",
-    "application": "django-psql-redis-celery-rabbitmq",
+    "template": "django-psql-redis-celery-rabbitmq-rset",
+    "application": "django-psql-redis-celery-rabbitmq-rest",
     "createdBy": "johnedstone"
   },
   "objects": [
@@ -733,7 +733,7 @@
       "name": "SOURCE_REPOSITORY_REF",
       "displayName": "Source repository reference",
       "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
-      "value": "v5-django-psql-redis-celery-rabbitmq"
+      "value": "v6-django-psql-redis-celery-rabbitmq-rest"
     },
     {
       "name": "CONTEXT_DIR",
