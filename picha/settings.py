@@ -16,7 +16,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # custom apps
+    # Third party apps
+    'rest_framework',
+    'rest_framework.authtoken',
+    # Internal apps
+    'bsub',
     'experiences',
     'feedback',
     'photos',
@@ -32,7 +36,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
-
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'PAGINATE_BY': 10
+}
 ROOT_URLCONF = 'picha.urls'
 TEMPLATES = [
     {
@@ -54,18 +61,17 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'picha.wsgi.application'
+TIME_ZONE = 'UTC'
+USE_TZ = True
+LANGUAGE_CODE = 'en-us'
+USE_I18N = True
+USE_L10N = True
 
 from . import database
 
 DATABASES = {
     'default': database.config()
 }
-
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -138,7 +144,8 @@ CELERYD_HIJACK_ROOT_LOGGER = False
 CELERYD_PREFETCH_MULTIPLIER = 1
 CELERYD_MAX_TASKS_PER_CHILD = 1000
 CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TIMEZONE = 'Africa/Nairobi'
+CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE = "UTC"
 CELERY_RESULT_SERIALIZER = 'json'
 
 if DEBUG:

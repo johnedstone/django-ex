@@ -1,11 +1,19 @@
 # Openshift V3.1 quickstart: Django - based on Origin's VM 1.1.4
 
-### This is the  master branch which is currently a copy of the v5 branch
+This branch, which is the master branch, is identical to th v6 branch, which demonstrates several features on top of the original django-ex project.
+  - celery
+  - redis
+  - rabbitmq
+  - REST API
 
-v6 branch is a work in progress
-
+See the different branches (versions) for each of these features as this repo was built out from the original django-ex from which this was cloned.
 
 #### Branches
+
+  - v6-django-psql-redis-celery-rabbitmq-rest
+    * Adding a REST API as suggested by [syncano](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/).  This working REST API is slightly different from [syncano](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/), which doesn't exactly work as they described it.
+    * Template for v6 is ```openshift/templates/django-psql-redis-celery-rabbitmq-rest.json```
+    * For the URL /api/ just enter a random fqdn and watch the job link.  In 50 sec the job will report _completed_.
 
   - v5-django-psql-redis-celery-rabbitmq
     * This finishes all of the ideas of the [picha project](https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/) and uses some of the ideas from the [docker-compose example](https://syncano.io/blog/configuring-running-django-celery-docker-containers-pt-1/) regarding celery.

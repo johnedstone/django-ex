@@ -1,0 +1,831 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "django-psql-redis-celery-rabbitmq-rest",
+    "annotations": {
+      "description": "An example Django application with psql, redis, celery, and rabbitmq",
+      "tags": "quickstart,python,django,postgresql,redis,celery,rabbitmq",
+      "iconClass": "icon-python"
+    }
+  },
+  "labels": {
+    "template": "django-psql-redis-celery-rabbitmq-rset",
+    "application": "django-psql-redis-celery-rabbitmq-rest",
+    "createdBy": "johnedstone"
+  },
+  "objects": [
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Exposes and load balances the application pods"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "web",
+            "port": 8080,
+            "targetPort": 8080
+           }
+        ],
+        "selector": {
+          "name": "django-ex"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the database server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "postgresql",
+            "port": 5432,
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${REDIS_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the redis server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "redis",
+            "port": 6379,
+            "targetPort": 6379
+          }
+        ],
+        "selector": {
+          "name": "${REDIS_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${RABBITMQ_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the rabbitmq server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "rabbitmq",
+            "port": 5672,
+            "targetPort": 5672
+          }
+        ],
+        "selector": {
+          "name": "${RABBITMQ_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex"
+      },
+      "spec": {
+        "host": "${APPLICATION_DOMAIN}",
+        "to": {
+          "kind": "Service",
+          "name": "django-ex"
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Keeps track of changes in the application image"
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_POD_NAME}",
+        "annotations": {
+          "description": "Keeps track of changes in the celery image"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Defines how to build the application"
+         }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.4"
+            },
+            "env": [
+              {
+                "name": "APP_MODULE",
+                "value": "picha.wsgi"
+              }
+            ]
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "django-ex:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          }
+        ],
+        "postCommit": {
+          "script": "./manage.py test"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_POD_NAME}",
+        "annotations": {
+          "description": "Defines how to build the application"
+         }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "python:3.4"
+            },
+            "env": [
+              {
+                "name": "APP_FILE",
+                "value": "celery_app.py"
+              },
+              {
+                "name": "DISABLE_COLLECTSTATIC",
+                "value": "True"
+              },
+              {
+                "name": "DISABLE_MIGRATE",
+                "value": "True"
+              }
+            ]
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${CELERY_POD_NAME}:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "django-ex",
+        "annotations": {
+          "description": "Defines how to deploy the application server"
+         }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+      "triggers": [
+        {
+          "type": "ImageChange",
+          "imageChangeParams": {
+            "automatic": true,
+            "containerNames": [
+              "django-ex"
+            ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "django-ex:latest"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+         }
+      ],
+      "replicas": 1,
+      "selector": {
+        "name": "django-ex"
+      },
+      "template": {
+          "metadata": {
+            "name": "django-ex",
+            "labels": {
+              "name": "django-ex"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "django-ex",
+                "image": "django-ex",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 3,
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "httpGet": {
+                    "path": "/health",
+                    "port": 8080
+                  }
+                },
+                "env": [
+                  {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_ENGINE",
+                    "value": "${DATABASE_ENGINE}"
+                  },
+                  {
+                    "name": "DATABASE_NAME",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "REDIS_SERVICE_NAME",
+                    "value": "${REDIS_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "RABBITMQ_SERVICE_NAME",
+                    "value": "${RABBITMQ_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "RABBITMQ_USER",
+                    "value": "${RABBITMQ_USER}"
+                  },
+                  {
+                    "name": "RABBITMQ_PASS",
+                    "value": "${RABBITMQ_PASS}"
+                  },
+                  {
+                    "name": "APP_CONFIG",
+                    "value": "${APP_CONFIG}"
+                  },
+                  {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "${DJANGO_SECRET_KEY}"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${CELERY_POD_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the celery server"
+         }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling"
+        },
+      "triggers": [
+        {
+          "type": "ImageChange",
+          "imageChangeParams": {
+            "automatic": true,
+            "containerNames": [
+              "${CELERY_POD_NAME}"
+            ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "${CELERY_POD_NAME}:latest"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+         }
+      ],
+      "replicas": 1,
+      "selector": {
+        "name": "${CELERY_POD_NAME}"
+      },
+      "template": {
+          "metadata": {
+            "name": "${CELERY_POD_NAME}",
+            "labels": {
+              "name": "${CELERY_POD_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "${CELERY_POD_NAME}",
+                "image": "${CELERY_POD_NAME}",
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "comment": "The command 'celery -A picha.celery status' did not work.  Maybe it is an env problem",
+                  "exec": {
+                    "command": ["pgrep", "celery"]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "comment": "The command 'celery -A picha.celery status' did not work.  Maybe it is an env problem",
+                  "exec": {
+                    "command": ["pgrep", "celery"]
+                  }
+                },
+                "env": [
+                  {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_ENGINE",
+                    "value": "${DATABASE_ENGINE}"
+                  },
+                  {
+                    "name": "DATABASE_NAME",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "DATABASE_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "REDIS_SERVICE_NAME",
+                    "value": "${REDIS_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "RABBITMQ_SERVICE_NAME",
+                    "value": "${RABBITMQ_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "RABBITMQ_USER",
+                    "value": "${RABBITMQ_USER}"
+                  },
+                  {
+                    "name": "RABBITMQ_PASS",
+                    "value": "${RABBITMQ_PASS}"
+                  },
+                  {
+                    "name": "APP_CONFIG",
+                    "value": "${APP_CONFIG}"
+                  },
+                  {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "${DJANGO_SECRET_KEY}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the database"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "postgresql"
+              ],
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "openshift",
+              "name": "postgresql:9.4"
+            }
+          }
+        },
+        {
+          "type": "ConfigChange"
+        }
+      ],
+          "replicas": 1,
+          "selector": {
+            "name": "${DATABASE_SERVICE_NAME}"
+          },
+          "template": {
+            "metadata": {
+              "name": "${DATABASE_SERVICE_NAME}",
+              "labels": {
+                "name": "${DATABASE_SERVICE_NAME}"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "postgresql",
+                  "image": "postgresql",
+                  "ports": [
+                    {
+                      "containerPort": 5432
+                    }
+                  ],
+                  "env": [
+                    {
+                      "name": "POSTGRESQL_USER",
+                      "value": "${DATABASE_USER}"
+                    },
+                    {
+                      "name": "POSTGRESQL_PASSWORD",
+                      "value": "${DATABASE_PASSWORD}"
+                    },
+                  {
+                    "name": "POSTGRESQL_DATABASE",
+                    "value": "${DATABASE_NAME}"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "psql -h 127.0.0.1 -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'" ]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port": 5432
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${REDIS_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy redis"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${REDIS_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${REDIS_SERVICE_NAME}",
+            "labels": {
+              "name": "${REDIS_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "redis",
+                "image": "redis:2.8.19",
+                "ports": [
+                  {
+                    "containerPort": 6379,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "/usr/local/bin/redis-cli ping" ]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port": 6379
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${RABBITMQ_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy rabbitmq"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${RABBITMQ_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${RABBITMQ_SERVICE_NAME}",
+            "labels": {
+              "name": "${RABBITMQ_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "rabbitmq",
+                "image": "tutum/rabbitmq",
+                "ports": [
+                  {
+                    "containerPort": 5672,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "RABBITMQ_PASS",
+                    "value": "${RABBITMQ_PASS}"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "rabbitmqctl", "cluster_status" ]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port":5672 
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "MEMORY_LIMIT",
+      "displayName": "Django Memory limit",
+      "description": "Maximum amount of memory the Django container can use",
+      "value": "512Mi"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_URL",
+      "displayName": "Source repository URL",
+      "description": "The URL of the repository with your application source code",
+      "value": "https://github.com/johnedstone/django-ex.git"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_REF",
+      "displayName": "Source repository reference",
+      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch",
+      "value": "v6-django-psql-redis-celery-rabbitmq-rest"
+    },
+    {
+      "name": "CONTEXT_DIR",
+      "displayName": "Context directory",
+      "description": "Set this to the relative path to your project if it is not in the root of your repository"
+    },
+    {
+      "name": "APPLICATION_DOMAIN",
+      "displayName": "Application hostname",
+      "description": "The exposed hostname that will route to the Django service, if left blank a value will be defaulted.",
+      "value": ""
+    },
+    {
+      "name": "GITHUB_WEBHOOK_SECRET",
+      "displayName": "GitHub webhook secret",
+      "description": "A secret string used to configure the GitHub webhook",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{40}"
+    },
+    {
+      "name": "DATABASE_SERVICE_NAME",
+      "displayName": "Database service name",
+      "description": "Database service name",
+      "value": "postgresql"
+    },
+    {
+      "name": "DATABASE_ENGINE",
+      "displayName": "Database engine",
+      "description": "Database engine: postgresql, mysql or sqlite (default)",
+      "value": "postgresql"
+    },
+    {
+      "name": "DATABASE_NAME",
+      "displayName": "Database name",
+      "description": "Database name",
+      "value": "default"
+    },
+    {
+      "name": "DATABASE_USER",
+      "displayName": "Database user name",
+      "description": "Database user name",
+      "value": "django"
+    },
+    {
+      "name": "DATABASE_PASSWORD",
+      "displayName": "Database user password",
+      "description": "Database user password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
+    },
+    {
+      "name": "REDIS_SERVICE_NAME",
+      "displayName": "Redis service name",
+      "description": "Redis service name",
+      "value": "redis"
+    },
+    {
+      "name": "RABBITMQ_SERVICE_NAME",
+      "displayName": "rabbitmq service name",
+      "description": "rabbitmq service name",
+      "value": "rabbitmq"
+    },
+    {
+      "name": "RABBITMQ_PASS",
+      "displayName": "rabbitmq password",
+      "description": "rabbitmq password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
+    },
+    {
+      "name": "RABBITMQ_USER",
+      "displayName": "rabbitmq user",
+      "description": "rabbitmq user",
+      "value": "admin"
+    },
+    {
+      "name": "CELERY_POD_NAME",
+      "displayName": "Celery service name",
+      "description": "Celery service name",
+      "value": "celery"
+    },
+    {
+      "name": "APP_CONFIG",
+      "displayName": "Application configuration file path",
+      "description": "Relative path to Gunicorn configuration file (optional)"
+    },
+    {
+      "name": "DJANGO_SECRET_KEY",
+      "displayName": "Djange secret key",
+      "description": "Set this to a long random string",
+      "generate": "expression",
+      "from": "[\\w]{50}"
+    }
+  ]
+}
